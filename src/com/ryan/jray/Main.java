@@ -7,11 +7,16 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import javax.swing.JFrame;
+
+import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
+import com.ryan.jray.map.Map;
+import com.ryan.jray.map.RandomMap;
+import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
-	public final int WIDTH = 800;
-	public final int HEIGHT = 600;
+	public final int WIDTH = 600;
+	public final int HEIGHT = 300;
 	public final static String TITLE = "JRay";
 	private JFrame frame;
 	private Thread thread;
@@ -20,6 +25,8 @@ public class Main extends Canvas implements Runnable {
 	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 	public static Main game;
 	public static Screen screen;
+	public static Camera camera;
+	public static Map map;
 
 	public static void main(String[] args) {
 		game = new Main();
@@ -31,7 +38,6 @@ public class Main extends Canvas implements Runnable {
 		game.frame.setLocationRelativeTo(null);
 		game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		game.frame.setVisible(true);
-
 		game.start();
 	}
 
@@ -40,7 +46,10 @@ public class Main extends Canvas implements Runnable {
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
+		map = new RandomMap(10, 10);
 		screen = new Screen(WIDTH, HEIGHT);
+		camera = new Camera(new Vector2(5, 5), 0f);
+		camera.rayCaster.setMap(map);
 	}
 
 	public synchronized void start() {
@@ -52,7 +61,6 @@ public class Main extends Canvas implements Runnable {
 	}
 
 	public synchronized void stop() {
-		// Sound.stopAll();
 		if (!running)
 			return;
 		running = false;
@@ -103,21 +111,20 @@ public class Main extends Canvas implements Runnable {
 	}
 
 	public void update() {
-
+		camera.update();
 	}
 
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
-			createBufferStrategy(3);
+			createBufferStrategy(1);
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
 		screen.clear();
-		for (int x = 0; x < WIDTH; x++) {
-			screen.renderColum(0, x, HEIGHT / 2);
-		}
-		for (int i = 0; i < (WIDTH) * (HEIGHT); i++) {
+		camera.render(screen);
+
+		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			pixels[i] = screen.pixels[i];
 		}
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
