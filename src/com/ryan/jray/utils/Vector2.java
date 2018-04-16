@@ -23,13 +23,16 @@ public class Vector2 {
 	}
 
 	public double distance(Vector2 vec) {
-		return (double) Math.hypot(this.x - vec.x, this.y - vec.y);
+		return Math.sqrt((vec.x - this.x) * (vec.x - this.x) + (vec.y - this.y) * (vec.y - this.y));
 	}
 
-	public Vector2 add(Vector2 vec) {
-		return new Vector2(this.x + vec.x, this.y + vec.y);
+	public void add(Vector2 vec) {
+		this.x = this.x + vec.x;
+		this.y = this.y + vec.y;
+		//return new Vector2(this.x + vec.x, this.y + vec.y);
 	}
+
 	public String toString() {
-		return this.x+","+this.y;
+		return this.x + "," + this.y;
 	}
 }

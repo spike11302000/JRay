@@ -12,11 +12,11 @@ public class RandomMap extends Map {
 
 	public void generateMap() {
 		for (int i = 0; i < map.length; i++) {
-			map[i] = new MapObject(rand.nextInt(0xFFFFFF));
+
 			if (rand.nextInt(100) < 10)
-				map[i].visible = false;
+				map[i] = new MapObject(rand.nextInt(0xFFFFFF));
 			else
-				map[i].visible = false;
+				map[i] = null;
 		}
 	}
 }

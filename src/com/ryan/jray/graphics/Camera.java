@@ -6,7 +6,7 @@ public class Camera {
 	public Vector2 position;
 	public float rotation;
 	public float FOV = 45;
-	public RayCaster rayCaster = new RayCaster(new Vector2(), 100f, 0.01f);
+	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .01);
 
 	public Camera() {
 		this.position = new Vector2();
@@ -30,8 +30,8 @@ public class Camera {
 
 	public void update() {
 		this.rotation += 1;
+		//this.position.y+=.5f;
 		rayCaster.setPos(this.position);
-
 	}
 
 	public void render(Screen screen) {
@@ -39,7 +39,7 @@ public class Camera {
 			double rot = ((x/screen.WIDTH)*FOV)-FOV/2;
 			RayObject ro = rayCaster.test(rot+this.rotation);
 			double z =  ro.distance * Math.cos(Math.toRadians(rot));
-			int height = (int) (((float) screen.WIDTH / (float) screen.HEIGHT) * ((float) screen.HEIGHT / z));
+			int height = (int) (( screen.WIDTH / screen.HEIGHT) * (screen.HEIGHT / z));
 			screen.renderColum(ro.mapObject.color, (int)x, height);
 		}
 	}

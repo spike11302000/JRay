@@ -13,9 +13,9 @@ public class Screen {
 
 	public void renderColum(int color, int x, int height) {
 		if (x > 0 && x < this.WIDTH && height < (this.HEIGHT / 2))
-			for (int i = (HEIGHT / 2) - (height / 2); i < (HEIGHT / 2) + (height / 2); i++) {
+			for (int i = (HEIGHT / 2) - (height / 2); i < (HEIGHT / 2) + (height / 2); i++)
 				this.pixels[i * (WIDTH) + x] = color;
-			}
+
 	}
 
 	public void clear() {

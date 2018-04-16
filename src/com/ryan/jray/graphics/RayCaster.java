@@ -12,7 +12,7 @@ public class RayCaster {
 	public double maxDistance;
 	private Vector2 rayVelocity = new Vector2();
 	public double step;
-
+	public RayObject test = new RayObject(0,new MapObject());
 	public RayCaster() {
 		this.position = new Vector2();
 		this.rayPositon = new Vector2();
@@ -37,17 +37,23 @@ public class RayCaster {
 	}
 
 	public RayObject test(double angle) {
-		this.angle = angle;
-		this.rayPositon = this.position;
-		this.rayVelocity.x = Math.sin(Math.toRadians(this.angle)) * this.step;
-		this.rayVelocity.y = -Math.cos(Math.toRadians(this.angle)) * this.step;
-		while (this.position.distance(this.rayPositon) < this.maxDistance) {
-			this.rayPositon = this.rayPositon.add(this.rayVelocity);
+		//this.angle = angle;
+		this.rayPositon.x = this.position.x;
+		this.rayPositon.y = this.position.y;
+		double rad = Math.toRadians(angle);
+		this.rayVelocity.x = Math.sin(rad) * this.step;
+		this.rayVelocity.y = -Math.cos(rad) * this.step;
+		while (this.position.distance(this.rayPositon)<this.maxDistance) {
+			this.rayPositon.add(this.rayVelocity);
 			MapObject mo = map.checkPoint(this.rayPositon);
-			if (mo.visible)
-				return new RayObject(this.position.distance(this.rayPositon),mo);
+			if (mo !=null) {
+				test.distance = this.position.distance(this.rayPositon);
+				test.mapObject = mo;
+				return test;
+			}
 		}
-		return new RayObject(this.maxDistance,new MapObject());
+		test.distance = this.maxDistance;
+		return test;
 	}
 
 }

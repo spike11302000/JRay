@@ -15,8 +15,8 @@ import com.ryan.jray.map.RandomMap;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
-	public final int WIDTH = 600;
-	public final int HEIGHT = 300;
+	public final int WIDTH = 800;
+	public final int HEIGHT = 600;
 	public final static String TITLE = "JRay";
 	private JFrame frame;
 	private Thread thread;
@@ -46,9 +46,9 @@ public class Main extends Canvas implements Runnable {
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
-		map = new RandomMap(10, 10);
+		map = new RandomMap(20, 100);
 		screen = new Screen(WIDTH, HEIGHT);
-		camera = new Camera(new Vector2(5, 5), 0f);
+		camera = new Camera(new Vector2(10, 10), 0f);
 		camera.rayCaster.setMap(map);
 	}
 
@@ -117,7 +117,7 @@ public class Main extends Canvas implements Runnable {
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
-			createBufferStrategy(1);
+			createBufferStrategy(3);
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
