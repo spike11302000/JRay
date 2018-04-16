@@ -29,10 +29,20 @@ public class Vector2 {
 	public void add(Vector2 vec) {
 		this.x = this.x + vec.x;
 		this.y = this.y + vec.y;
-		//return new Vector2(this.x + vec.x, this.y + vec.y);
 	}
-
+	public void sub(Vector2 vec) {
+		this.x = this.x - vec.x;
+		this.y = this.y - vec.y;
+	}
+	public void mult(Vector2 vec) {
+		this.x = this.x * vec.x;
+		this.y = this.y * vec.y;
+	}
+	public void div(Vector2 vec) {
+		this.x = this.x / vec.x;
+		this.y = this.y / vec.y;
+	}
 	public String toString() {
-		return this.x + "," + this.y;
+		return "X:"+Math.floor(this.x*1000)/1000 + " Y:" + Math.floor(this.y*1000)/1000;
 	}
 }

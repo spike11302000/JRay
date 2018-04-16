@@ -13,7 +13,7 @@ public class RandomMap extends Map {
 	public void generateMap() {
 		for (int i = 0; i < map.length; i++) {
 
-			if (rand.nextInt(100) < 10)
+			if (rand.nextInt(100) < 5)
 				map[i] = new MapObject(rand.nextInt(0xFFFFFF));
 			else
 				map[i] = null;

@@ -4,8 +4,8 @@ import com.ryan.jray.utils.Vector2;
 
 public class Camera {
 	public Vector2 position;
-	public float rotation;
-	public float FOV = 45;
+	public double rotation;
+	public double FOV = 45;
 	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .01);
 
 	public Camera() {
@@ -14,7 +14,7 @@ public class Camera {
 
 	}
 
-	public Camera(Vector2 pos, float rot) {
+	public Camera(Vector2 pos, double rot) {
 		this.position = pos;
 		this.rotation = rot;
 
@@ -24,23 +24,21 @@ public class Camera {
 		this.position = pos;
 	}
 
-	public void serRotation(float rot) {
+	public void serRotation(double rot) {
 		this.rotation = rot;
 	}
 
 	public void update() {
-		this.rotation += 1;
-		//this.position.y+=.5f;
 		rayCaster.setPos(this.position);
 	}
 
 	public void render(Screen screen) {
 		for (double x = 0; x < screen.WIDTH; x++) {
-			double rot = ((x/screen.WIDTH)*FOV)-FOV/2;
-			RayObject ro = rayCaster.test(rot+this.rotation);
-			double z =  ro.distance * Math.cos(Math.toRadians(rot));
-			int height = (int) (( screen.WIDTH / screen.HEIGHT) * (screen.HEIGHT / z));
-			screen.renderColum(ro.mapObject.color, (int)x, height);
+			double rot = ((x / screen.WIDTH) * FOV) - FOV / 2;
+			RayObject ro = rayCaster.test(rot + this.rotation);
+			double z = ro.distance * Math.cos(Math.toRadians(rot));
+			int height = (int) ((screen.WIDTH / screen.HEIGHT) * (screen.HEIGHT / z));
+			screen.renderColum(ro.mapObject.color, (int) Math.floor(x), height);
 		}
 	}
 }

@@ -1,12 +1,13 @@
 package com.ryan.jray.map;
 
+import com.ryan.jray.utils.Color;
 import com.ryan.jray.utils.Vector2;
 
 public class Map {
 	public int WIDTH;
 	public int HEIGHT;
 	public MapObject[] map;
-	public MapObject wall = new MapObject();
+	public MapObject wall = new MapObject(0xFF00ff);
 
 	public Map(int width, int height) {
 		this.WIDTH = width;
@@ -21,10 +22,10 @@ public class Map {
 
 	public MapObject checkPoint(Vector2 pos) {
 		if (pos.x > 0 && pos.y > 0 && pos.x < this.WIDTH && pos.y < this.HEIGHT) {
-			int index = (int)pos.x + ((int)pos.y * this.WIDTH);
+			int index = (int)Math.floor(pos.x) + ((int)Math.floor(pos.y) * this.WIDTH);
 			return map[index];
 		}
-		return wall;
+		return new MapObject(new Color((int) ((pos.x-Math.floor(pos.x))*255),0,(int) ((pos.y-Math.floor(pos.y))*255) ).toInt());
 	}
 
 }

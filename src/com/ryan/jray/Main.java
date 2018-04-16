@@ -1,13 +1,17 @@
 package com.ryan.jray;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import javax.swing.JFrame;
 
+import com.ryan.jray.controls.Keyboard;
+import com.ryan.jray.entity.Player;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.map.Map;
@@ -15,8 +19,8 @@ import com.ryan.jray.map.RandomMap;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
-	public final int WIDTH = 800;
-	public final int HEIGHT = 600;
+	public final int WIDTH = 600;
+	public final int HEIGHT = 400;
 	public final static String TITLE = "JRay";
 	private JFrame frame;
 	private Thread thread;
@@ -27,7 +31,8 @@ public class Main extends Canvas implements Runnable {
 	public static Screen screen;
 	public static Camera camera;
 	public static Map map;
-
+	public static Keyboard key;
+	public static Player player;
 	public static void main(String[] args) {
 		game = new Main();
 		game.frame = new JFrame();
@@ -46,10 +51,14 @@ public class Main extends Canvas implements Runnable {
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
-		map = new RandomMap(20, 100);
+		
+		key = new Keyboard();
+		map = new RandomMap(10, 10);
 		screen = new Screen(WIDTH, HEIGHT);
-		camera = new Camera(new Vector2(10, 10), 0f);
+		camera = new Camera();
 		camera.rayCaster.setMap(map);
+		player = new Player(new Vector2(5,5),0,key,camera);
+		addKeyListener(key);
 	}
 
 	public synchronized void start() {
@@ -86,13 +95,11 @@ public class Main extends Canvas implements Runnable {
 			long now = System.nanoTime();
 			delta += (now - lastTime) / ns;
 			lastTime = now;
-
 			if (delta >= 1) {
 				update();
 				updates++;
 				delta--;
 			}
-
 			render();
 			frames++;
 
@@ -112,15 +119,19 @@ public class Main extends Canvas implements Runnable {
 
 	public void update() {
 		camera.update();
+		player.update();
+		key.update();
 	}
-
+	Font f = new Font("Dialog", Font.PLAIN, 15);
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
-			createBufferStrategy(3);
+			createBufferStrategy(2);
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
+		g.setFont(f);
+		g.setColor(Color.white);
 		screen.clear();
 		camera.render(screen);
 
@@ -128,6 +139,7 @@ public class Main extends Canvas implements Runnable {
 			pixels[i] = screen.pixels[i];
 		}
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
+		g.drawString(player.position.toString(), 5, 15);
 		g.dispose();
 		bs.show();
 	}
