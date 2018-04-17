@@ -20,18 +20,29 @@ public class Player extends Entity {
 
 	public void update() {
 		if (this.key.rotR)
-			this.rotation+=2;
+			this.rotation += 2;
 		if (this.key.rotL)
-			this.rotation-=2;
+			this.rotation -= 2;
 		Vector2 vel = new Vector2(Math.sin(Math.toRadians(this.rotation)) * this.speed,
 				-Math.cos(Math.toRadians(this.rotation)) * this.speed);
-		if (this.key.up) {
-			this.position.add(vel);
-		}
-		if (this.key.down) {
-			this.position.sub(vel);
-		}
+		if ((this.key.up && this.key.left) || (this.key.up && this.key.right) || (this.key.down && this.key.left)
+				|| (this.key.down && this.key.right))
+			vel.div(new Vector2(2, 2));
 
+		if (this.key.up)
+			this.position.add(vel);
+
+		if (this.key.down)
+			this.position.sub(vel);
+
+		if (this.key.left) {
+			this.position.x += vel.y;
+			this.position.y -= vel.x;
+		}
+		if (this.key.right) {
+			this.position.x -= vel.y;
+			this.position.y += vel.x;
+		}
 		this.cam.position = this.position;
 		this.cam.rotation = this.rotation;
 	}

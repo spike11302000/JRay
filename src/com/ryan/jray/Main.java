@@ -53,11 +53,11 @@ public class Main extends Canvas implements Runnable {
 		setMaximumSize(size);
 		
 		key = new Keyboard();
-		map = new RandomMap(10, 10);
+		map = new RandomMap(10, 100);
 		screen = new Screen(WIDTH, HEIGHT);
 		camera = new Camera();
 		camera.rayCaster.setMap(map);
-		player = new Player(new Vector2(5,5),0,key,camera);
+		player = new Player(new Vector2(5,5),180,key,camera);
 		addKeyListener(key);
 	}
 
@@ -116,7 +116,10 @@ public class Main extends Canvas implements Runnable {
 		}
 
 	}
-
+	@Override
+    public void setSize(int width, int height) {
+        System.out.println("setSize");
+    }
 	public void update() {
 		camera.update();
 		player.update();

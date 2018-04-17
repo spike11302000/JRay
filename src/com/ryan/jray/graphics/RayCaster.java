@@ -48,8 +48,9 @@ public class RayCaster {
 			dist = this.position.distance(this.rayPositon); // Gets the distance of the ray from the starting point.
 			this.rayPositon.add(this.rayVelocity); // Adds the velocity to the current ray position.
 			MapObject mo = map.checkPoint(this.rayPositon); // Checks if there is a object and return the MapObject.
-			if (mo != null) // Check is the object is there or not.
+			if (mo != null && mo.visible) // Check is the object is there or not.
 				return new RayObject(dist, mo); // Return a RayObject with distance and MapObject.
+			this.rayVelocity.mult(new Vector2(1+this.step/10,1+this.step/10));
 		} while (dist < this.maxDistance); // Checks if the max distance has been pasted.
 
 		test.distance = this.maxDistance;

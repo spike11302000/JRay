@@ -37,7 +37,7 @@ public class Camera {
 			double rot = ((x / screen.WIDTH) * FOV) - FOV / 2;
 			RayObject ro = rayCaster.test(rot + this.rotation);
 			double z = ro.distance * Math.cos(Math.toRadians(rot));
-			int height = (int) ((screen.WIDTH / screen.HEIGHT) * (screen.HEIGHT / z));
+			int height = (int) ((((double)screen.WIDTH / (double)screen.HEIGHT)) * (screen.HEIGHT / z));
 			screen.renderColum(ro.mapObject.color, (int) Math.floor(x), height);
 		}
 	}
