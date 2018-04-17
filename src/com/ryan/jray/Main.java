@@ -14,6 +14,8 @@ import com.ryan.jray.controls.Keyboard;
 import com.ryan.jray.entity.Player;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
+import com.ryan.jray.graphics.Sprite;
+import com.ryan.jray.graphics.SpriteSheet;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.RandomMap;
 import com.ryan.jray.utils.Vector2;
@@ -53,12 +55,13 @@ public class Main extends Canvas implements Runnable {
 		setMaximumSize(size);
 		
 		key = new Keyboard();
-		map = new RandomMap(10, 100);
+		map = new Map(10, 10);
 		screen = new Screen(WIDTH, HEIGHT);
 		camera = new Camera();
 		camera.rayCaster.setMap(map);
 		player = new Player(new Vector2(5,5),180,key,camera);
 		addKeyListener(key);
+		
 	}
 
 	public synchronized void start() {
@@ -137,7 +140,6 @@ public class Main extends Canvas implements Runnable {
 		g.setColor(Color.white);
 		screen.clear();
 		camera.render(screen);
-
 		for (int i = 0; i < WIDTH * HEIGHT; i++) {
 			pixels[i] = screen.pixels[i];
 		}

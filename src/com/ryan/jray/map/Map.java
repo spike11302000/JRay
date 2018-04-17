@@ -22,10 +22,10 @@ public class Map {
 
 	public MapObject checkPoint(Vector2 pos) {
 		if (pos.x > 0 && pos.y > 0 && pos.x < this.WIDTH && pos.y < this.HEIGHT) {
-			int index = (int)Math.floor(pos.x) + ((int)Math.floor(pos.y) * this.WIDTH);
+			int index = (int) Math.floor(pos.x) + ((int) Math.floor(pos.y) * this.WIDTH);
 			return map[index];
 		}
-		return new MapObject(new Color((int) ((pos.x-Math.floor(pos.x))*255),0,(int) ((pos.y-Math.floor(pos.y))*255) ).toInt());
+		return new MapObject(new Vector2((pos.x - Math.floor(pos.x))*100,(pos.y - Math.floor(pos.y))*100));
 	}
 
 }

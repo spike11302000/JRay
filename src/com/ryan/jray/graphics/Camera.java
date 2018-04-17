@@ -1,5 +1,6 @@
 package com.ryan.jray.graphics;
 
+import com.ryan.jray.map.MapObjectType;
 import com.ryan.jray.utils.Vector2;
 
 public class Camera {
@@ -38,7 +39,18 @@ public class Camera {
 			RayObject ro = rayCaster.test(rot + this.rotation);
 			double z = ro.distance * Math.cos(Math.toRadians(rot));
 			int height = (int) (screen.ASPECT * (screen.HEIGHT / z));
-			screen.renderColum(ro.mapObject.color, (int) Math.floor(x), height);
+			if (ro.mapObject.type == MapObjectType.COLOR)
+				screen.drawColum(ro.mapObject.color, (int) Math.floor(x), height);
+			if (ro.mapObject.type == MapObjectType.TEXTURE) {
+				if (ro.mapObject.imageVec.y >= 98)
+					screen.drawColumSprite(Sprite.test, (int) x, ro.mapObject.imageVec.x, height);
+				if (ro.mapObject.imageVec.x >= 98)
+					screen.drawColumSprite(Sprite.test, (int) x, 100d - ro.mapObject.imageVec.y, height);
+				if(ro.mapObject.imageVec.y<=2)
+					screen.drawColumSprite(Sprite.test, (int) x, 100d - ro.mapObject.imageVec.x, height);
+				if(ro.mapObject.imageVec.x<=2)
+					screen.drawColumSprite(Sprite.test, (int) x, ro.mapObject.imageVec.y, height);
+			}
 		}
 	}
 }

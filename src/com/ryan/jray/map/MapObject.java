@@ -3,7 +3,7 @@ package com.ryan.jray.map;
 import com.ryan.jray.utils.Vector2;
 
 public class MapObject {
-	private MapObjectType type;
+	public MapObjectType type;
 	public int color;
 	public boolean visible; 
 	public Vector2 imageVec;
