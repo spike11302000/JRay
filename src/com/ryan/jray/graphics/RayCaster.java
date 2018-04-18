@@ -45,38 +45,29 @@ public class RayCaster {
 											// the starting position.
 		this.rayPositon.y = this.position.y;
 		double rad = Math.toRadians(angle); // Convert degrees to radians.
-		this.rayVelocity.x = Math.sin(rad) * this.step; // Calculate the
-														// velocity of the ray.
+		this.rayVelocity.x = Math.sin(rad) * this.step; // Calculate thea velocity of the ray.
 		this.rayVelocity.y = -Math.cos(rad) * this.step;
-		if (rayVelocity.x < 0)
-			sideDist.x = this.position.x - Math.floor(this.position.x)*this.rayVelocity.x;
-		else
-			sideDist.x = Math.floor(this.position.x + 1 - this.position.x)*this.rayVelocity.x;
 
-		if (rayVelocity.y < 0)
-			sideDist.y = this.position.y - Math.floor(this.position.y)*this.rayVelocity.y;
-		else
-			sideDist.y = Math.floor(this.position.y + 1 - this.position.y)*this.rayVelocity.y;
-
-		if (sideDist.x < sideDist.y)
-			side = 0;
-		else
-			side = 1;
 		double texX;
+		double texY;
 		double dist;
 		do {
 			dist = this.position.distance(this.rayPositon); // Gets the distance of the ray from the starting point.
 			this.rayPositon.add(this.rayVelocity); // Adds the velocity to the current ray position.
 			MapObject mo = map.checkPoint(this.rayPositon); // Checks if there is a object and return the MapObject.
+			sideDist.add(this.rayVelocity);
+			if (sideDist.x < sideDist.y)
+				side = 1;
+			else
+				side = 0;
 			if (mo != null && mo.visible) // Check is the object is there or not.
-				if(mo.type == MapObjectType.COLOR)
+				if (mo.type == MapObjectType.COLOR)
 					return new RayObject(dist, mo);
-				else{
-					if(side==1)
-						texX = this.rayPositon.y-Math.floor(this.rayPositon.y);
-					else
-						texX = this.rayPositon.x-Math.floor(this.rayPositon.x);
-					return new RayObject(dist, mo,texX); // Return a RayObject with distance and MapObject.
+				else {
+					texX = this.rayPositon.x - Math.floor(this.rayPositon.x);
+					texY = this.rayPositon.y - Math.floor(this.rayPositon.y);
+					return new RayObject(dist, mo, new Vector2(texX, texY)); // Return a RayObject with distance and
+																				// MapObject.
 				}
 			this.rayVelocity.mult(new Vector2(1 + this.step / 10, 1 + this.step / 10));
 		} while (dist < this.maxDistance); // Checks if the max distance has been pasted.
