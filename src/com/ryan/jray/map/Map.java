@@ -1,5 +1,8 @@
 package com.ryan.jray.map;
 
+import java.util.ArrayList;
+
+import com.ryan.jray.entity.Entity;
 import com.ryan.jray.utils.Vector2;
 
 public class Map {
@@ -7,7 +10,7 @@ public class Map {
 	public int HEIGHT;
 	public MapObject[] map;
 	public MapObject wall = new MapObject(MapObjectType.COLOR,0xFF00ff);
-
+	public ArrayList<Entity> entities = new ArrayList<Entity>();
 	public Map(int width, int height) {
 		this.WIDTH = width;
 		this.HEIGHT = height;
