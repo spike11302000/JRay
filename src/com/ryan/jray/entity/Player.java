@@ -3,6 +3,8 @@ package com.ryan.jray.entity;
 import com.ryan.jray.utils.Vector2;
 import com.ryan.jray.controls.Keyboard;
 import com.ryan.jray.graphics.Camera;
+import com.ryan.jray.graphics.Screen;
+import com.ryan.jray.graphics.Sprite;
 
 public class Player extends Entity {
 	public double rotation;
@@ -46,5 +48,8 @@ public class Player extends Entity {
 		}
 		this.cam.position = this.position;
 		this.cam.rotation = this.rotation;
+	}
+	public void render(Screen screen) {
+		screen.drawSprite(Sprite.test, 0, screen.renderHeight, screen.WIDTH,screen.HEIGHT-screen.renderHeight);
 	}
 }

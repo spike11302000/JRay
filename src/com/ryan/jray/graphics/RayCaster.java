@@ -13,7 +13,7 @@ public class RayCaster {
 	public double step; // the step size of the ray.
 	private Map map; // The current map.
 	private Vector2 rayVelocity = new Vector2(); // The ray's velocity.
-	public RayObject test = new RayObject(0, new MapObject(0x0a0a0a));
+	public RayObject test = new RayObject(0, new MapObject(MapObjectType.COLOR,0x0a0a0a));
 
 	public RayCaster() {
 		this.position = new Vector2();
@@ -39,13 +39,10 @@ public class RayCaster {
 	}
 
 	public RayObject test(double angle) {
-		int side = 0;
-		Vector2 sideDist = new Vector2();
-		this.rayPositon.x = this.position.x;// Setting the current position with
-											// the starting position.
+		this.rayPositon.x = this.position.x;// Setting the current position with the starting position.
 		this.rayPositon.y = this.position.y;
 		double rad = Math.toRadians(angle); // Convert degrees to radians.
-		this.rayVelocity.x = Math.sin(rad) * this.step; // Calculate thea velocity of the ray.
+		this.rayVelocity.x = Math.sin(rad) * this.step; // Calculate the velocity of the ray.
 		this.rayVelocity.y = -Math.cos(rad) * this.step;
 
 		double texX;
@@ -55,11 +52,6 @@ public class RayCaster {
 			dist = this.position.distance(this.rayPositon); // Gets the distance of the ray from the starting point.
 			this.rayPositon.add(this.rayVelocity); // Adds the velocity to the current ray position.
 			MapObject mo = map.checkPoint(this.rayPositon); // Checks if there is a object and return the MapObject.
-			sideDist.add(this.rayVelocity);
-			if (sideDist.x < sideDist.y)
-				side = 1;
-			else
-				side = 0;
 			if (mo != null && mo.visible) // Check is the object is there or not.
 				if (mo.type == MapObjectType.COLOR)
 					return new RayObject(dist, mo);

@@ -42,15 +42,16 @@ public class Camera {
 			if (ro.mapObject.type == MapObjectType.COLOR)
 				screen.drawColum(ro.mapObject.color, (int) Math.floor(x), height);
 			if (ro.mapObject.type == MapObjectType.TEXTURE) {
+				Sprite sprite = Sprite.getSprite(ro.mapObject.textureID);
 				if (ro.textureVector.y <= .05 && ro.textureVector.y <= .95)
-					screen.drawColumSprite(Sprite.iron, (int) x, ro.textureVector.x, height);
+					screen.drawColumSprite(sprite, (int) x, 1d-ro.textureVector.x, height);
 				if (ro.textureVector.x <= .05 && ro.textureVector.x <= .95)
-					screen.drawColumSprite(Sprite.iron, (int) x, ro.textureVector.y, height);
+					screen.drawColumSprite(sprite, (int) x, ro.textureVector.y, height);
 				if (ro.textureVector.y >= .95 && ro.textureVector.x >= .05)
-					screen.drawColumSprite(Sprite.iron, (int) x, ro.textureVector.x, height);
+					screen.drawColumSprite(sprite, (int) x, ro.textureVector.x, height);
 				if (ro.textureVector.x >= .95 && ro.textureVector.y >= .05)
-					screen.drawColumSprite(Sprite.iron, (int) x, ro.textureVector.y, height);
-
+					screen.drawColumSprite(sprite, (int) x, 1d-ro.textureVector.y, height);
+				
 			}
 		}
 	}

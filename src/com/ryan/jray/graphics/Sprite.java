@@ -5,9 +5,24 @@ public class Sprite {
 	private int x, y;
 	public int[] pixels;
 	private SpriteSheet sheet;
-	public static Sprite test =  new Sprite(512,0,0,SpriteSheet.test);
-	public static Sprite iron = new Sprite(16,14,3,SpriteSheet.tiles);
-	
+	public static Sprite test = new Sprite(512, 0, 0, SpriteSheet.test);
+	public static Sprite iron = new Sprite(16, 8, 0, SpriteSheet.tiles);
+	public static Sprite hdbrick = new Sprite(512, 0, 0, SpriteSheet.brick);
+
+	public static Sprite error = new Sprite(16, 0xff00ff);
+
+	public static Sprite getSprite(int id) {
+		switch (id) {
+		case 0:
+			return test;
+		case 1:
+			return iron;
+		case 2:
+			return hdbrick;
+		}
+		return error;
+	}
+
 	public Sprite(int size, int x, int y, SpriteSheet sheet) {
 		this.SIZE = size;
 		pixels = new int[SIZE * SIZE];
