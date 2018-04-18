@@ -21,4 +21,10 @@ public class Color {
 		rgb = (rgb << 8) + this.b;
 		return rgb;
 	}
+	public Color lerp(Color c1,Color c2,double f){
+		int r = (int) MathUtils.lerp(c1.r, c2.r, f);
+		int g = (int) MathUtils.lerp(c1.g, c2.g, f);
+		int b = (int) MathUtils.lerp(c1.b, c2.b, f);
+		return new Color(r,g,b);
+	}
 }

@@ -13,9 +13,10 @@ public class RandomMap extends Map {
 	public void generateMap() {
 		for (int i = 0; i < map.length; i++) {
 
-			if (rand.nextInt(100) < 5)
+			if (rand.nextInt(100) < 5) {
 				map[i] = new MapObject(rand.nextInt(0xFFFFFF));
-			else
+				map[i].type = MapObjectType.TEXTURE;
+			} else
 				map[i] = null;
 		}
 	}

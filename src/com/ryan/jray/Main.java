@@ -55,7 +55,7 @@ public class Main extends Canvas implements Runnable {
 		setMaximumSize(size);
 		
 		key = new Keyboard();
-		map = new Map(10, 10);
+		map = new RandomMap(10, 10);
 		screen = new Screen(WIDTH, HEIGHT);
 		camera = new Camera();
 		camera.rayCaster.setMap(map);

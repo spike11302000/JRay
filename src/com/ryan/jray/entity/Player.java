@@ -15,10 +15,11 @@ public class Player extends Entity {
 		this.rotation = rot;
 		this.key = key;
 		this.cam = cam;
-		this.speed = .1;
+		this.speed = 0.1;
 	}
 
 	public void update() {
+		//this.rotation++;
 		if (this.key.rotR)
 			this.rotation += 2;
 		if (this.key.rotL)

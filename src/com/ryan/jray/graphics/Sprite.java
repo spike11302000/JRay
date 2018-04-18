@@ -5,7 +5,8 @@ public class Sprite {
 	private int x, y;
 	public int[] pixels;
 	private SpriteSheet sheet;
-	public static Sprite test =  new Sprite(16,8,0,SpriteSheet.tiles);
+	public static Sprite test =  new Sprite(512,0,0,SpriteSheet.test);
+	public static Sprite iron = new Sprite(16,14,3,SpriteSheet.tiles);
 	
 	public Sprite(int size, int x, int y, SpriteSheet sheet) {
 		this.SIZE = size;
