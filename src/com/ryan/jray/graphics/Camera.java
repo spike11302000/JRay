@@ -43,15 +43,18 @@ public class Camera {
 				screen.drawColum(ro.mapObject.color, (int) Math.floor(x), height);
 			if (ro.mapObject.type == MapObjectType.TEXTURE) {
 				Sprite sprite = Sprite.getSprite(ro.mapObject.textureID);
-				if (ro.textureVector.y <= .05 && ro.textureVector.y <= .95)
-					screen.drawColumSprite(sprite, (int) x, 1d-ro.textureVector.x, height);
-				if (ro.textureVector.x <= .05 && ro.textureVector.x <= .95)
-					screen.drawColumSprite(sprite, (int) x, ro.textureVector.y, height);
-				if (ro.textureVector.y >= .95 && ro.textureVector.x >= .05)
-					screen.drawColumSprite(sprite, (int) x, ro.textureVector.x, height);
-				if (ro.textureVector.x >= .95 && ro.textureVector.y >= .05)
-					screen.drawColumSprite(sprite, (int) x, 1d-ro.textureVector.y, height);
-				
+				double avg = (ro.textureVector.x + ro.textureVector.y) / 2.0;
+				if (avg > .5) {
+					if (ro.textureVector.x > ro.textureVector.y)
+						screen.drawColumSprite(sprite, (int) x, 1 - ((avg * 2) - 1), height);
+					else
+						screen.drawColumSprite(sprite, (int) x, ((avg * 2) - 1), height);
+				} else {
+					if (ro.textureVector.x > ro.textureVector.y)
+						screen.drawColumSprite(sprite, (int) x, 1 - (avg * 2), height);
+					else
+						screen.drawColumSprite(sprite, (int) x, (avg * 2), height);
+				}
 			}
 		}
 	}
