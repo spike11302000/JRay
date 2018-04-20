@@ -1,5 +1,6 @@
 package com.ryan.jray.graphics;
 
+import com.ryan.jray.utils.Color;
 import com.ryan.jray.utils.MathUtils;
 
 public class Screen {

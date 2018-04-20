@@ -13,7 +13,7 @@ public class RayCaster {
 	public double step; // the step size of the ray.
 	private Map map; // The current map.
 	private Vector2 rayVelocity = new Vector2(); // The ray's velocity.
-	public RayObject test = new RayObject(0, new MapObject(MapObjectType.COLOR,0x0a0a0a));
+	public RayObject test = new RayObject(0, new MapObject(MapObjectType.COLOR, 0x0a0a0a));
 
 	public RayCaster() {
 		this.position = new Vector2();
@@ -53,13 +53,19 @@ public class RayCaster {
 			this.rayPositon.add(this.rayVelocity); // Adds the velocity to the current ray position.
 			MapObject mo = map.checkPoint(this.rayPositon); // Checks if there is a object and return the MapObject.
 			if (mo != null && mo.visible) // Check is the object is there or not.
-				if (mo.type == MapObjectType.COLOR)
-					return new RayObject(dist, mo);
-				else {
+				/*if (mo.entity != null) {
 					texX = this.rayPositon.x - Math.floor(this.rayPositon.x);
 					texY = this.rayPositon.y - Math.floor(this.rayPositon.y);
-					return new RayObject(dist, mo, new Vector2(texX, texY)); // Return a RayObject with distance and
-																				// MapObject.
+					return new RayObject(mo.entity.position.distance(this.position), mo, new Vector2(texX,0));
+				} else {*/
+
+					if (mo.type == MapObjectType.COLOR)
+						return new RayObject(dist, mo);
+					else {
+						texX = this.rayPositon.x - Math.floor(this.rayPositon.x);
+						texY = this.rayPositon.y - Math.floor(this.rayPositon.y);
+						return new RayObject(dist, mo, new Vector2(texX, texY)); // Return a RayObject with distance and
+					//} // MapObject.
 				}
 			this.rayVelocity.mult(new Vector2(1 + this.step / 10, 1 + this.step / 10));
 		} while (dist < this.maxDistance); // Checks if the max distance has been pasted.

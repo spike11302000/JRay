@@ -54,7 +54,7 @@ public class Main extends Canvas implements Runnable {
 		setMaximumSize(size);
 		
 		key = new Keyboard();
-		map = new RandomMap(100, 100);
+		map = new Map(10, 10);
 		screen = new Screen(WIDTH, HEIGHT);
 		camera = new Camera();
 		camera.rayCaster.setMap(map);
@@ -127,6 +127,7 @@ public class Main extends Canvas implements Runnable {
 		camera.update();
 		player.update();
 		key.update();
+		map.update();
 	}
 	Font f = new Font("Dialog", Font.PLAIN, 15);
 	public void render() {

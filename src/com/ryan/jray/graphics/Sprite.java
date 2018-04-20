@@ -6,7 +6,7 @@ public class Sprite {
 	public int[] pixels;
 	private SpriteSheet sheet;
 	public static Sprite test = new Sprite(512, 0, 0, SpriteSheet.test);
-	public static Sprite iron = new Sprite(16, 8, 0, SpriteSheet.tiles);
+	public static Sprite iron = new Sprite(16, 6, 3, SpriteSheet.tiles);
 	public static Sprite hdbrick = new Sprite(512, 0, 0, SpriteSheet.brick);
 
 	public static Sprite error = new Sprite(16, 0xff00ff);

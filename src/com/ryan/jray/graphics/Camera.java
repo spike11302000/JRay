@@ -6,7 +6,7 @@ import com.ryan.jray.utils.Vector2;
 public class Camera {
 	public Vector2 position;
 	public double rotation;
-	public double FOV = 45;
+	public double FOV = 50;
 	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .01);
 
 	public Camera() {
@@ -37,11 +37,12 @@ public class Camera {
 		for (double x = 0; x < screen.WIDTH; x++) {
 			double rot = ((x / screen.WIDTH) * FOV) - FOV / 2;
 			RayObject ro = rayCaster.test(rot + this.rotation);
-			double z = ro.distance * Math.cos(Math.toRadians(rot));
+			double z = ro.distance * Math.cos(Math.toRadians((rot)));
 			int height = (int) (screen.ASPECT * (screen.HEIGHT / z));
 			if (ro.mapObject.type == MapObjectType.COLOR)
 				screen.drawColum(ro.mapObject.color, (int) Math.floor(x), height);
 			if (ro.mapObject.type == MapObjectType.TEXTURE) {
+				
 				Sprite sprite = Sprite.getSprite(ro.mapObject.textureID);
 				double avg = (ro.textureVector.x + ro.textureVector.y) / 2.0;
 				if (avg > .5) {

@@ -10,6 +10,11 @@ public class Color {
 		this.g = 0;
 		this.b = 0;
 	}
+	public Color(int color) {
+		this.r = (color>>16)&0xFF;
+		this.g = (color>>8)&0xFF;
+		this.b = (color>>0)&0xFF;
+	}
 	public Color(int red,int green,int blue) {
 		this.r = red;
 		this.g = green;
@@ -21,7 +26,7 @@ public class Color {
 		rgb = (rgb << 8) + this.b;
 		return rgb;
 	}
-	public Color lerp(Color c1,Color c2,double f){
+	public static Color lerp(Color c1,Color c2,double f){
 		int r = (int) MathUtils.lerp(c1.r, c2.r, f);
 		int g = (int) MathUtils.lerp(c1.g, c2.g, f);
 		int b = (int) MathUtils.lerp(c1.b, c2.b, f);
