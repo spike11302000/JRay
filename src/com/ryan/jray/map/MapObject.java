@@ -9,7 +9,6 @@ public class MapObject {
 	public boolean visible; 
 	public int textureID;
 	public Vector2 textureOffset;
-	public Entity entity;
 	public MapObject() {
 		this.color = 0xF0F0F0;
 		this.type = MapObjectType.COLOR;
@@ -26,10 +25,6 @@ public class MapObject {
 		this.textureID = color;
 		this.type = type;
 		this.visible = visible;
-	}
-	public MapObject setEntity(Entity ent) {
-		this.entity = ent;
-		return this;
 	}
 	/*public MapObject(Vector2 imgVec) {
 		this.color = 0x0000;

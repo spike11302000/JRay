@@ -1,5 +1,6 @@
 package com.ryan.jray.entity;
 
+import com.ryan.jray.graphics.Sprite;
 import com.ryan.jray.map.MapObject;
 import com.ryan.jray.map.MapObjectType;
 import com.ryan.jray.utils.Vector2;
@@ -7,7 +8,7 @@ import com.ryan.jray.utils.Vector2;
 public class Entity {
 	public Vector2 position;
 	public Vector2 size;
-
+	public int textureID;
 	public Entity() {
 		this.position = new Vector2();
 	}
@@ -22,17 +23,17 @@ public class Entity {
 		this.size = size;
 
 	}
-
-	public MapObject checkPoint(Vector2 pos) {
-		if (this.position.x - (this.size.x / 2) < pos.x && this.position.y - (this.size.y / 2) < pos.y
-				&& (this.position.x +this.size.x)- (this.size.x / 2) > pos.x && (this.position.y+ this.size.y)- (this.size.y / 2) > pos.y)
-			return new MapObject(MapObjectType.TEXTURE, 1).setEntity(this);
-
-		return null;
+	public void setSprite(int texID) {
+		this.textureID = texID;
 	}
 
 	public void update() {
 
+	}
+
+	public int compareTo(Entity arg0) {
+
+		return 0;
 	}
 
 }

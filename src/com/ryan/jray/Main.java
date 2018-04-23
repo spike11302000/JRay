@@ -57,8 +57,8 @@ public class Main extends Canvas implements Runnable {
 		map = new Map(10, 10);
 		screen = new Screen(WIDTH, HEIGHT);
 		camera = new Camera();
-		camera.rayCaster.setMap(map);
-		player = new Player(new Vector2(5,5),180,key,camera);
+		camera.setMap(map);
+		player = new Player(new Vector2(5,2),180,key,camera);
 		addKeyListener(key);
 		
 	}

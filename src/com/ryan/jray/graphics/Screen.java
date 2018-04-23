@@ -44,7 +44,7 @@ public class Screen {
 		if (x > this.WIDTH)
 			x = this.WIDTH;
 
-		int yy = (int) Math.floor(y*(sprite.SIZE));
+		int yy = (int) Math.floor(y*sprite.SIZE);
 		if(yy>sprite.SIZE-1)yy=sprite.SIZE-1;
 		if(yy<0)yy=0;
 		
