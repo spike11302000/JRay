@@ -3,6 +3,7 @@ package com.ryan.jray.map;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.ryan.jray.entity.AnimatedEntity;
 import com.ryan.jray.entity.Entity;
 import com.ryan.jray.utils.Vector2;
 
@@ -10,7 +11,7 @@ public class Map {
 	public int WIDTH;
 	public int HEIGHT;
 	public MapObject[] map;
-	public MapObject wall = new MapObject(MapObjectType.TEXTURE, 0);
+	public MapObject wall = new MapObject(MapObjectType.TEXTURE, 1);
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
 
 	public Map(int width, int height) {
@@ -21,8 +22,9 @@ public class Map {
 	}
 
 	private void generateMap() {
-		Entity ent = new Entity(new Vector2(5,5));
-		ent.setSprite(new Random().nextInt(3));
+		//Entity ent = new Entity(new Vector2(5,5));
+		//ent.setSprite(new Random().nextInt(3));
+		Entity ent = new AnimatedEntity(new Vector2(5,5),new Vector2(1,1));
 		this.entities.add(ent);
 	}
 

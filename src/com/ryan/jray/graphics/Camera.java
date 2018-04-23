@@ -1,5 +1,6 @@
 package com.ryan.jray.graphics;
 
+import com.ryan.jray.entity.AnimatedEntity;
 import com.ryan.jray.entity.Entity;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.MapObjectType;
@@ -35,8 +36,9 @@ public class Camera {
 
 	public void update() {
 		this.rotation = this.rotation % 360;
-		if(this.rotation<0)this.rotation+=360;
-		System.out.println(this.rotation);
+		if (this.rotation < 0)
+			this.rotation += 360;
+		// System.out.println(this.rotation);
 		rayCaster.setPos(this.position);
 		this.map.sortEntities(this.position);
 	}
@@ -55,17 +57,10 @@ public class Camera {
 
 				Sprite sprite = Sprite.getSprite(ro.mapObject.textureID);
 				double avg = (ro.textureVector.x + ro.textureVector.y) / 2.0;
-				if (avg > .5) {
-					if (ro.textureVector.x > ro.textureVector.y)
-						screen.drawColumSprite(sprite, (int) x, 1 - ((avg * 2) - 1), height);
-					else
-						screen.drawColumSprite(sprite, (int) x, ((avg * 2) - 1), height);
-				} else {
-					if (ro.textureVector.x > ro.textureVector.y)
-						screen.drawColumSprite(sprite, (int) x, 1 - (avg * 2), height);
-					else
-						screen.drawColumSprite(sprite, (int) x, (avg * 2), height);
-				}
+				if (ro.textureVector.x > ro.textureVector.y)
+					screen.drawColumSprite(sprite, (int) x, (avg * 2), height);
+				else
+					screen.drawColumSprite(sprite, (int) x, 1 - (avg * 2), height);
 			}
 
 		}
@@ -73,17 +68,26 @@ public class Camera {
 			Entity ent = this.map.entities.get(i);
 			double dist = this.position.distance(ent.position);
 			Vector2 relative = new Vector2(ent.position.x - this.position.x, ent.position.y - this.position.y);
-			double a = this.rotation % 360 - MathUtils.getAngle(relative) - 90;
+			double a = this.rotation - MathUtils.getAngle(relative) - 90;
+			a %= 360;
 			if (a > 180)
 				a -= 360;
 			if (a < -180)
 				a += 360;
+
 			int x = (int) MathUtils.map(-a, (-FOV / 2), (FOV / 2), 0, screen.WIDTH);
 			int height = (int) (screen.ASPECT * (screen.HEIGHT / dist));
-			for (int xx = -height / 2; xx < height / 2; xx++) {
+			int width = (int) (height * ent.size.x);
+			height = (int) (height * ent.size.y);
+
+			for (int xx = -width / 2; xx < width / 2; xx++) {
 				if (x + xx > 0 && x + xx < screen.WIDTH && zBuffer[x + xx] > dist) {
-					screen.drawColumSprite(Sprite.getSprite(ent.textureID), x + xx,
-							MathUtils.map(xx, -height / 2, height / 2, 0, 1d), height);
+					if (ent instanceof AnimatedEntity)
+						screen.drawColumSprite(Sprite.getSprite(((AnimatedEntity) ent).animatedSprite.getTextureID()),
+								x + xx, MathUtils.map(xx, -width / 2, width / 2, 0, 1d), height);
+					else
+						screen.drawColumSprite(Sprite.getSprite(ent.textureID), x + xx,
+								MathUtils.map(xx, -width / 2, width / 2, 0, 1d), height);
 				}
 			}
 
