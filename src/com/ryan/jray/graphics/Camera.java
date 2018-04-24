@@ -2,18 +2,20 @@ package com.ryan.jray.graphics;
 
 import com.ryan.jray.entity.AnimatedEntity;
 import com.ryan.jray.entity.Entity;
+import com.ryan.jray.map.Light;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.MapObjectType;
 import com.ryan.jray.utils.MathUtils;
 import com.ryan.jray.utils.Vector2;
 
 public class Camera {
-	public Vector2 position;
+	public Vector2 position = new Vector2();
 	public double rotation;
 	public double FOV = 50;
 	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .01);
+	public RayCaster lightCaster = new RayCaster(new Vector2(), 1d, .05);
 	private Map map;
-
+	private boolean light = true;
 	public Camera() {
 		this.position = new Vector2();
 		this.rotation = 0;
@@ -41,6 +43,7 @@ public class Camera {
 		// System.out.println(this.rotation);
 		rayCaster.setPos(this.position);
 		this.map.sortEntities(this.position);
+		//this.lightCaster.step = 0.01;
 	}
 
 	public void render(Screen screen) {
@@ -51,16 +54,42 @@ public class Camera {
 			double z = ro.distance * Math.cos(Math.toRadians((rot)));
 			int height = (int) (screen.ASPECT * (screen.HEIGHT / z));
 			zBuffer[(int) x] = ro.distance;
+			double b = light ? 0:1;
+			if (ro.hitCoord != null&&light) {
+				for (Light l : map.lights) {
+					double d = l.position.distance(ro.hitCoord);
+					//if(b>=1)
+					//	break;
+					if (d < l.brightness) {
+						this.lightCaster.maxDistance = d - 0.1d;
+						double angle = ((MathUtils.getAngle(new Vector2(ro.hitCoord.x - l.position.x, ro.hitCoord.y - l.position.y)) - 90)
+								% 360);
+						Vector2 offset = new Vector2(ro.hitCoord.x, ro.hitCoord.y);
+						offset.add(new Vector2(Math.sin(Math.toRadians(angle)) * .1,
+								-Math.cos(Math.toRadians(angle)) * .1));
+						this.lightCaster.setPos(offset);
+						RayObject r = this.lightCaster.test(angle);
+						if (r.mapObject.color == 0x0a0a0a) {
+							double t = MathUtils.map(d, 0, l.brightness, 1, .1);
+							b += t;
+						}
+					}
+				}
+			}
+			if (b > 1)
+				b = 1;
+			if (b < .1)
+				b = .1;
 			if (ro.mapObject.type == MapObjectType.COLOR)
 				screen.drawColum(ro.mapObject.color, (int) Math.floor(x), height);
 			if (ro.mapObject.type == MapObjectType.TEXTURE) {
 
 				Sprite sprite = Sprite.getSprite(ro.mapObject.textureID);
 				double avg = (ro.textureVector.x + ro.textureVector.y) / 2.0;
-				if (avg>.5)
-					screen.drawColumSprite(sprite, (int) x, (avg * 2)-1, height);
+				if (avg > .5)
+					screen.drawColumSprite(sprite, (int) x, (avg * 2) - 1, height, b);
 				else
-					screen.drawColumSprite(sprite, (int) x, (avg * 2), height);
+					screen.drawColumSprite(sprite, (int) x, (avg * 2), height, b);
 			}
 
 		}
@@ -97,5 +126,6 @@ public class Camera {
 	public void setMap(Map map) {
 		this.map = map;
 		this.rayCaster.setMap(map);
+		this.lightCaster.setMap(map);
 	}
 }

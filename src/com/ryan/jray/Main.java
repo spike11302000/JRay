@@ -11,12 +11,15 @@ import java.awt.image.DataBufferInt;
 import javax.swing.JFrame;
 
 import com.ryan.jray.controls.Keyboard;
+import com.ryan.jray.entity.Entity;
 import com.ryan.jray.entity.Player;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
+import com.ryan.jray.map.Light;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.RandomMap;
 import com.ryan.jray.map.TextMap;
+import com.ryan.jray.utils.MathUtils;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
@@ -35,6 +38,7 @@ public class Main extends Canvas implements Runnable {
 	public static Map map;
 	public static Keyboard key;
 	public static Player player;
+
 	public static void main(String[] args) {
 		game = new Main();
 		game.frame = new JFrame();
@@ -53,16 +57,18 @@ public class Main extends Canvas implements Runnable {
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
-		//Map text = new TextMap("test.map");
+		// Map text = new TextMap("test.map");
 		key = new Keyboard();
 		map = new TextMap("test.map");
-		//map = new Map(10,10);
+		// map = new Map(10,10);
+		map.entities.add(new Entity(new Vector2(12.5,3.5)));
+		//map.entities.add(new Entity(new Vector2(7.5,3.5)));
 		screen = new Screen(WIDTH, HEIGHT);
 		camera = new Camera();
 		camera.setMap(map);
-		player = new Player(new Vector2(5,5),180,key,camera);
+		player = new Player(new Vector2(1.5, 1.5), 180, key, camera);
 		addKeyListener(key);
-		
+
 	}
 
 	public synchronized void start() {
@@ -112,7 +118,7 @@ public class Main extends Canvas implements Runnable {
 				// System.out.println(updates + " ups, " + frames + " fps");
 				frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
 				// level.updateTimer();
-				
+
 				fps = frames;
 				ups = updates;
 				frames = 0;
@@ -121,17 +127,22 @@ public class Main extends Canvas implements Runnable {
 		}
 
 	}
+
 	@Override
-    public void setSize(int width, int height) {
-        System.out.println("setSize");
-    }
+	public void setSize(int width, int height) {
+		System.out.println("setSize");
+	}
+
 	public void update() {
 		camera.update();
 		player.update();
 		key.update();
 		map.update();
+
 	}
+
 	Font f = new Font("Dialog", Font.PLAIN, 15);
+
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {

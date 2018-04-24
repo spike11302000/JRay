@@ -59,13 +59,13 @@ public class RayCaster {
 				else {
 					texX = this.rayPositon.x % 1;
 					texY = this.rayPositon.y % 1;
-					return new RayObject(dist, mo, new Vector2(texX, texY)); // Return a RayObject with distance and
+					return new RayObject(dist, mo, new Vector2(texX, texY),new Vector2(this.rayPositon.x,this.rayPositon.y)); // Return a RayObject with distance and
 					// MapObject.
 				}
 			this.rayVelocity.mult(new Vector2(1 + this.step / 10, 1 + this.step / 10));
 		} while (dist < this.maxDistance); // Checks if the max distance has been pasted.
 
-		test.distance = 1000000000;
+		test.distance = this.maxDistance;
 		return test;
 	}
 

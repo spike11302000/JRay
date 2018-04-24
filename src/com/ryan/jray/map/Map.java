@@ -13,6 +13,7 @@ public class Map {
 	public MapObject[] map;
 	public MapObject wall = new MapObject(MapObjectType.TEXTURE, 1);
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
+	public ArrayList<Light> lights = new ArrayList<Light>();
 	
 	public Map() {
 		this.WIDTH = 0;
@@ -28,6 +29,7 @@ public class Map {
 	}
 
 	private void generateMap() {
+		
 		//Entity ent = new Entity(new Vector2(5,5));
 		//ent.setSprite(new Random().nextInt(3));
 		//Entity ent = new AnimatedEntity(new Vector2(5,5),new Vector2(1,1));

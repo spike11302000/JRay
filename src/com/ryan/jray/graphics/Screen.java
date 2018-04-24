@@ -53,6 +53,25 @@ public class Screen {
 			this.pixels[i * (WIDTH) + x] = sprite.pixels[xx * (sprite.SIZE) + yy];
 		}
 	}
+	public void drawColumSprite(Sprite sprite, int x, double y, int height,double brightness) {
+		int oHeight = height;
+		if (height > this.renderHeight)
+			height = this.renderHeight;
+		
+		if (x < 0)
+			x = 0;
+		if (x > this.WIDTH)
+			x = this.WIDTH;
+
+		int yy = (int) Math.floor(y*sprite.SIZE);
+		if(yy>sprite.SIZE-1)yy=sprite.SIZE-1;
+		if(yy<0)yy=0;
+		
+		for (int i = (this.renderHeight / 2) - (height / 2); i < (this.renderHeight / 2) + (height / 2); i++) {
+			int xx = MathUtils.map(i, (this.renderHeight / 2) - (oHeight / 2), (this.renderHeight / 2) + (oHeight / 2), 0, sprite.SIZE);
+			this.pixels[i * (WIDTH) + x] = Color.lerp(new Color(0,0,0), new Color(sprite.pixels[xx * (sprite.SIZE) + yy]), brightness).toInt();
+		}
+	}
 	public void drawSprite(Sprite sprite,int x,int y,int w,int h) {
 		for(int sx =0;sx<w;sx++) {
 			for(int sy =0;sy<h;sy++) {
