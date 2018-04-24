@@ -65,7 +65,7 @@ public class RayCaster {
 			this.rayVelocity.mult(new Vector2(1 + this.step / 10, 1 + this.step / 10));
 		} while (dist < this.maxDistance); // Checks if the max distance has been pasted.
 
-		test.distance = this.maxDistance;
+		test.distance = 1000000000;
 		return test;
 	}
 
