@@ -13,7 +13,13 @@ public class Map {
 	public MapObject[] map;
 	public MapObject wall = new MapObject(MapObjectType.TEXTURE, 1);
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
-
+	
+	public Map() {
+		this.WIDTH = 0;
+		this.HEIGHT = 0;
+		this.map = new MapObject[0];
+		this.generateMap();
+	}
 	public Map(int width, int height) {
 		this.WIDTH = width;
 		this.HEIGHT = height;
@@ -24,8 +30,8 @@ public class Map {
 	private void generateMap() {
 		//Entity ent = new Entity(new Vector2(5,5));
 		//ent.setSprite(new Random().nextInt(3));
-		Entity ent = new AnimatedEntity(new Vector2(5,5),new Vector2(1,1));
-		this.entities.add(ent);
+		//Entity ent = new AnimatedEntity(new Vector2(5,5),new Vector2(1,1));
+		//this.entities.add(ent);
 	}
 
 	public void update() {
@@ -40,7 +46,7 @@ public class Map {
 			MapObject mo = map[index];
 			return mo;
 		}
-		return wall;
+		return null;
 	}
 
 	public void swap(int i, int j) {

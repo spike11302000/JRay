@@ -57,10 +57,10 @@ public class Camera {
 
 				Sprite sprite = Sprite.getSprite(ro.mapObject.textureID);
 				double avg = (ro.textureVector.x + ro.textureVector.y) / 2.0;
-				if (ro.textureVector.x > ro.textureVector.y)
-					screen.drawColumSprite(sprite, (int) x, (avg * 2), height);
+				if (avg>.5)
+					screen.drawColumSprite(sprite, (int) x, (avg * 2)-1, height);
 				else
-					screen.drawColumSprite(sprite, (int) x, 1 - (avg * 2), height);
+					screen.drawColumSprite(sprite, (int) x, (avg * 2), height);
 			}
 
 		}

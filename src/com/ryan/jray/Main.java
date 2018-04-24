@@ -16,6 +16,7 @@ import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.RandomMap;
+import com.ryan.jray.map.TextMap;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
@@ -52,13 +53,14 @@ public class Main extends Canvas implements Runnable {
 		setPreferredSize(size);
 		setMinimumSize(size);
 		setMaximumSize(size);
-		
+		//Map text = new TextMap("test.map");
 		key = new Keyboard();
-		map = new Map(10, 10);
+		map = new TextMap("test.map");
+		//map = new Map(10,10);
 		screen = new Screen(WIDTH, HEIGHT);
 		camera = new Camera();
 		camera.setMap(map);
-		player = new Player(new Vector2(5,2),180,key,camera);
+		player = new Player(new Vector2(5,5),180,key,camera);
 		addKeyListener(key);
 		
 	}

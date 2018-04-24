@@ -50,6 +50,6 @@ public class Player extends Entity {
 		this.cam.rotation = this.rotation;
 	}
 	public void render(Screen screen) {
-		screen.drawSprite(Sprite.test, 0, screen.renderHeight, screen.WIDTH,screen.HEIGHT-screen.renderHeight);
+		//screen.drawSprite(Sprite.test, 0, screen.renderHeight, screen.WIDTH,screen.HEIGHT-screen.renderHeight);
 	}
 }
