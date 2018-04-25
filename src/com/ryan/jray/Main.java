@@ -21,8 +21,8 @@ import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
 	private static final long serialVersionUID = 7556956091489761808L;
-	public final int WIDTH = 600;
-	public final int HEIGHT = 400;
+	public final int WIDTH = 1200;
+	public final int HEIGHT = 800;
 	public final int Scale = 2;
 	public final static String TITLE = "JRay";
 	private JFrame frame;

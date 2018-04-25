@@ -15,7 +15,7 @@ public class Camera {
 	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .01);
 	public RayCaster lightCaster = new RayCaster(new Vector2(), 1d, .05);
 	private Map map;
-	private boolean light = true;
+	private boolean light = false;
 
 	public Camera() {
 		this.position = new Vector2();
