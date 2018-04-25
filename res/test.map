@@ -16,7 +16,7 @@
 2.5 9 5    --hallway by blue and green
 5.5 9 5    --hallway by blue and green
 8.5 9 5    --hallway by blue and green
-12.5 9 5   --hallway by blue and green
+12.5 9.5 5   --hallway by blue and green
 ==
 bbbbbbbbbbbaaacccccccccaaaeeeeee
 b b b b b b   c       c        e
@@ -29,9 +29,9 @@ a             c       c        e
 a             ccccccccc   eeeeee
 a                              a
 a                              a
-a                              a
-addddddddddddddd   dddddddddddda
-a                              a
+a             ddddddddddddddddda
+adddddddddd   d                a
+a         d   d                a
 a                              a
 a                              a
 a                              a

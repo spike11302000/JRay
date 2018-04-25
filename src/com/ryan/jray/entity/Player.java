@@ -39,7 +39,6 @@ public class Player extends Entity {
 			moveVel.div(new Vector2(2, 2));
 
 		if (this.key.up) {
-			// this.position.add(moveVel);
 			if (map.checkPoint(new Vector2(this.position.x + (moveVel.x * 4), this.position.y)) == null)
 				this.position.x += moveVel.x;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.y * 4))) == null)
@@ -61,7 +60,6 @@ public class Player extends Entity {
 		if (this.key.right) {
 			if (map.checkPoint(new Vector2(this.position.x - (moveVel.y * 4), this.position.y)) == null)
 				this.position.x -= moveVel.y;
-
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.x * 4))) == null)
 				this.position.y += moveVel.x;
 		}
