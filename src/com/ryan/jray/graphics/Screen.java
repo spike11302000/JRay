@@ -53,6 +53,7 @@ public class Screen {
 		int oHeight = height;
 		if (height > this.renderHeight)
 			height = this.renderHeight;
+		if(height<0)height=0;
 		if (x < 0)
 			x = 0;
 		if (x > this.WIDTH)
@@ -64,6 +65,9 @@ public class Screen {
 			yy = 0;
 		for (int i = (this.renderHeight / 2) - (height / 2); i < (this.renderHeight / 2) + (height / 2); i++) {
 			int xx = MathUtils.map(i, (this.renderHeight / 2) - (oHeight / 2), (this.renderHeight / 2) + (oHeight / 2), 0, sprite.SIZE);
+			if(xx>sprite.SIZE)
+				xx=sprite.SIZE;
+			if(xx<0)xx=0;
 			this.pixels[i * (WIDTH) + x] = Color.lerp(new Color(0, 0, 0), new Color(sprite.pixels[xx * (sprite.SIZE) + yy]), brightness).toInt();
 		}
 	}

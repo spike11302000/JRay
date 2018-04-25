@@ -21,7 +21,9 @@ public class Player extends Entity {
 		this.cam = cam;
 		this.speed = 0.1;
 	}
+
 	int tick = 0;
+
 	public void update() {
 		// this.rotation++;
 		tick++;
@@ -32,26 +34,40 @@ public class Player extends Entity {
 		Vector2 vel = new Vector2(Math.sin(Math.toRadians(this.rotation)), -Math.cos(Math.toRadians(this.rotation)));
 		Vector2 moveVel = new Vector2(vel.x * this.speed, vel.y * this.speed);
 		Vector2 bulletVel = new Vector2(vel.x * .2, vel.y * .2);
-		if ((this.key.up && this.key.left) || (this.key.up && this.key.right) || (this.key.down && this.key.left) || (this.key.down && this.key.right))
+		if ((this.key.up && this.key.left) || (this.key.up && this.key.right) || (this.key.down && this.key.left)
+				|| (this.key.down && this.key.right))
 			moveVel.div(new Vector2(2, 2));
 
-		if (this.key.up)
-			this.position.add(moveVel);
+		if (this.key.up) {
+			// this.position.add(moveVel);
+			if (map.checkPoint(new Vector2(this.position.x + (moveVel.x * 4), this.position.y)) == null)
+				this.position.x += moveVel.x;
+			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.y * 4))) == null)
+				this.position.y += moveVel.y;
+		}
 
-		if (this.key.down)
-			this.position.sub(moveVel);
-
+		if (this.key.down) {
+			if (map.checkPoint(new Vector2(this.position.x - (moveVel.x * 4), this.position.y)) == null)
+				this.position.x -= moveVel.x;
+			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.y * 4))) == null)
+				this.position.y -= moveVel.y;
+		}
 		if (this.key.left) {
-			this.position.x += moveVel.y;
-			this.position.y -= moveVel.x;
+			if (map.checkPoint(new Vector2(this.position.x + (moveVel.y * 4), this.position.y)) == null)
+				this.position.x += moveVel.y;
+			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.x * 4))) == null)
+				this.position.y -= moveVel.x;
 		}
 		if (this.key.right) {
-			this.position.x -= moveVel.y;
-			this.position.y += moveVel.x;
+			if (map.checkPoint(new Vector2(this.position.x - (moveVel.y * 4), this.position.y)) == null)
+				this.position.x -= moveVel.y;
+
+			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.x * 4))) == null)
+				this.position.y += moveVel.x;
 		}
-		
-		if (this.key.keys[32]&& tick%5==0)
-			map.entities.add(new Bullet(new Vector2(this.position.x+vel.x,this.position.y+vel.y),bulletVel));
+
+		if (this.key.keys[32] && tick % 1 == 0)
+			map.entities.add(new Bullet(new Vector2(this.position.x + vel.x, this.position.y + vel.y), bulletVel));
 		this.cam.position = this.position;
 		this.cam.rotation = this.rotation;
 	}

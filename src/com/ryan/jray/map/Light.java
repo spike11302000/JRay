@@ -1,6 +1,5 @@
 package com.ryan.jray.map;
 
-import com.ryan.jray.utils.Color;
 import com.ryan.jray.utils.Vector2;
 
 public class Light {
@@ -10,5 +9,7 @@ public class Light {
 		this.position = pos;
 		this.brightness = b;
 	}
+	public void update() {
 	
+	}
 }

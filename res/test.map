@@ -7,12 +7,16 @@
 6-f
 7-g
 --
-18.5 2.5 6
-18.5 6.5 6
-2.5 3.5 5
-7.5 3.5 5
-12.5 2.5 5
-12.5 4.5 5
+18.5 2.5 5 --brown room
+18.5 6.5 5 --brown room
+2.5 3.5 3  --blue room
+7.5 3.5 3  --blue room
+12.5 2.5 5 --hallway by blue and brown
+12.5 4.5 5 --hallway by blue and brown
+2.5 9 5    --hallway by blue and green
+5.5 9 5    --hallway by blue and green
+8.5 9 5    --hallway by blue and green
+12.5 9 5   --hallway by blue and green
 ==
 bbbbbbbbbbbaaacccccccccaaaeeeeee
 b b b b b b   c       c        e
@@ -22,8 +26,8 @@ b             c       c   e    e
 bbbbbbbbbbb   c       c   eeeeee
 a             c       c   e    e
 a             c       c        e
-              ccccccccc   eeeeee
-                               a
+a             ccccccccc   eeeeee
+a                              a
 a                              a
 a                              a
 addddddddddddddd   dddddddddddda

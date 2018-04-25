@@ -38,9 +38,11 @@ public class Map {
 	}
 
 	public void update() {
-		for (Entity ent : this.entities) {
+		for (Light l : this.lights) 
+			l.update();
+		for (Entity ent : this.entities) 
 			ent.update();
-		}
+		
 		for (Entity ent : this.entities)
 			if (ent.isDestroyed()) {
 				this.entities.remove(ent);

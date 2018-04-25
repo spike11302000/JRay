@@ -15,18 +15,15 @@ import com.ryan.jray.entity.Entity;
 import com.ryan.jray.entity.Player;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
-import com.ryan.jray.map.Light;
 import com.ryan.jray.map.Map;
-import com.ryan.jray.map.RandomMap;
 import com.ryan.jray.map.TextMap;
-import com.ryan.jray.utils.MathUtils;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
 	private static final long serialVersionUID = 7556956091489761808L;
 	public final int WIDTH = 600;
 	public final int HEIGHT = 400;
-	public final int Scale = 1;
+	public final int Scale = 2;
 	public final static String TITLE = "JRay";
 	private JFrame frame;
 	private Thread thread;
@@ -62,7 +59,8 @@ public class Main extends Canvas implements Runnable {
 		key = new Keyboard();
 		map = new TextMap("test.map");
 		// map = new Map(10,10);
-		map.entities.add(new Entity(new Vector2(12.5,3.5)));
+		//map.entities.add(new Entity(new Vector2(2.5,9)));
+		
 		
 		//map.entities.add(new Entity(new Vector2(7.5,3.5)));
 		screen = new Screen(WIDTH/Scale, HEIGHT/Scale);
@@ -118,10 +116,7 @@ public class Main extends Canvas implements Runnable {
 
 			while (System.currentTimeMillis() - lastTimer > 1000) {
 				lastTimer += 1000;
-				// System.out.println(updates + " ups, " + frames + " fps");
 				frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
-				// level.updateTimer();
-
 				fps = frames;
 				ups = updates;
 				frames = 0;

@@ -7,7 +7,7 @@ public class Bullet extends Entity {
 	public int lifeTime = 120;
 	public int textureID = 1;
 	public Bullet(Vector2 pos,Vector2 vel){
-		super(pos,new Vector2(.5,.5));
+		super(pos,new Vector2(.1,.1));
 		this.velocity = vel;
 	}
 	int tick = 0;
