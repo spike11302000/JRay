@@ -47,7 +47,6 @@ public class TextMap extends Map {
 			String l = (String) this.lines[i];
 			String[] g = l.split(" ");
 			this.lights.add(new Light(new Vector2(Double.parseDouble(g[0]),Double.parseDouble(g[1])),Double.parseDouble(g[2])));
-			System.out.println(g[1]);
 		}
 		
 		generateMap();

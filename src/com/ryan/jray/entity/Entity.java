@@ -1,14 +1,12 @@
 package com.ryan.jray.entity;
 
-import com.ryan.jray.graphics.Sprite;
-import com.ryan.jray.map.MapObject;
-import com.ryan.jray.map.MapObjectType;
 import com.ryan.jray.utils.Vector2;
 
 public class Entity {
 	public Vector2 position;
 	public Vector2 size;
 	public int textureID;
+	private boolean destroyed = false;
 	public Entity() {
 		this.position = new Vector2();
 	}
@@ -31,9 +29,11 @@ public class Entity {
 
 	}
 
-	public int compareTo(Entity arg0) {
-
-		return 0;
+	public void destroy(){
+		this.destroyed = true;
+	}
+	public boolean isDestroyed(){
+		return this.destroyed;
 	}
 
 }

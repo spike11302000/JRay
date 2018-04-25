@@ -67,6 +67,7 @@ public class Main extends Canvas implements Runnable {
 		camera = new Camera();
 		camera.setMap(map);
 		player = new Player(new Vector2(1.5, 1.5), 180, key, camera);
+		player.setMap(map);
 		addKeyListener(key);
 
 	}
@@ -134,10 +135,10 @@ public class Main extends Canvas implements Runnable {
 	}
 
 	public void update() {
-		camera.update();
 		player.update();
 		key.update();
 		map.update();
+		camera.update();
 
 	}
 

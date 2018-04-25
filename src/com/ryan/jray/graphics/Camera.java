@@ -16,6 +16,7 @@ public class Camera {
 	public RayCaster lightCaster = new RayCaster(new Vector2(), 1d, .05);
 	private Map map;
 	private boolean light = true;
+
 	public Camera() {
 		this.position = new Vector2();
 		this.rotation = 0;
@@ -43,7 +44,7 @@ public class Camera {
 		// System.out.println(this.rotation);
 		rayCaster.setPos(this.position);
 		this.map.sortEntities(this.position);
-		//this.lightCaster.step = 0.01;
+		// this.lightCaster.step = 0.01;
 	}
 
 	public void render(Screen screen) {
@@ -54,19 +55,17 @@ public class Camera {
 			double z = ro.distance * Math.cos(Math.toRadians((rot)));
 			int height = (int) (screen.ASPECT * (screen.HEIGHT / z));
 			zBuffer[(int) x] = ro.distance;
-			double b = light ? 0:1;
-			if (ro.hitCoord != null&&light) {
+			double b = light ? 0 : 1;
+			if (ro.hitCoord != null && light) {
 				for (Light l : map.lights) {
 					double d = l.position.distance(ro.hitCoord);
-					//if(b>=1)
-					//	break;
+					// if(b>=1)
+					// break;
 					if (d < l.brightness) {
 						this.lightCaster.maxDistance = d - 0.1d;
-						double angle = ((MathUtils.getAngle(new Vector2(ro.hitCoord.x - l.position.x, ro.hitCoord.y - l.position.y)) - 90)
-								% 360);
+						double angle = ((MathUtils.getAngle(new Vector2(ro.hitCoord.x - l.position.x, ro.hitCoord.y - l.position.y)) - 90) % 360);
 						Vector2 offset = new Vector2(ro.hitCoord.x, ro.hitCoord.y);
-						offset.add(new Vector2(Math.sin(Math.toRadians(angle)) * .1,
-								-Math.cos(Math.toRadians(angle)) * .1));
+						offset.add(new Vector2(Math.sin(Math.toRadians(angle)) * .1, -Math.cos(Math.toRadians(angle)) * .1));
 						this.lightCaster.setPos(offset);
 						RayObject r = this.lightCaster.test(angle);
 						if (r.mapObject.color == 0x0a0a0a) {
@@ -112,11 +111,9 @@ public class Camera {
 			for (int xx = -width / 2; xx < width / 2; xx++) {
 				if (x + xx > 0 && x + xx < screen.WIDTH && zBuffer[x + xx] > dist) {
 					if (ent instanceof AnimatedEntity)
-						screen.drawColumSprite(Sprite.getSprite(((AnimatedEntity) ent).animatedSprite.getTextureID()),
-								x + xx, MathUtils.map(xx, -width / 2, width / 2, 0, 1d), height);
+						screen.drawColumSprite(Sprite.getSprite(((AnimatedEntity) ent).animatedSprite.getTextureID()), x + xx, MathUtils.map(xx, -width / 2, width / 2, 0, 1d), height);
 					else
-						screen.drawColumSprite(Sprite.getSprite(ent.textureID), x + xx,
-								MathUtils.map(xx, -width / 2, width / 2, 0, 1d), height);
+						screen.drawColumSprite(Sprite.getSprite(ent.textureID), x + xx, MathUtils.map(xx, -width / 2, width / 2, 0, 1d), height);
 				}
 			}
 

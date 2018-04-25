@@ -20,12 +20,14 @@ public class Keyboard implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent ke) {
-		keys[ke.getKeyCode()] = true;
+		if (ke.getKeyCode() <= 120)
+			keys[ke.getKeyCode()] = true;
 	}
 
 	@Override
 	public void keyReleased(KeyEvent ke) {
-		keys[ke.getKeyCode()] = false;
+		if (ke.getKeyCode() <= 120)
+			keys[ke.getKeyCode()] = false;
 	}
 
 	@Override
