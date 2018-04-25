@@ -26,11 +26,12 @@ public class Main extends Canvas implements Runnable {
 	private static final long serialVersionUID = 7556956091489761808L;
 	public final int WIDTH = 600;
 	public final int HEIGHT = 400;
+	public final int Scale = 1;
 	public final static String TITLE = "JRay";
 	private JFrame frame;
 	private Thread thread;
 	private boolean running = false;
-	private BufferedImage image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+	private BufferedImage image = new BufferedImage(WIDTH/Scale, HEIGHT/Scale, BufferedImage.TYPE_INT_RGB);
 	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 	public static Main game;
 	public static Screen screen;
@@ -62,8 +63,9 @@ public class Main extends Canvas implements Runnable {
 		map = new TextMap("test.map");
 		// map = new Map(10,10);
 		map.entities.add(new Entity(new Vector2(12.5,3.5)));
+		
 		//map.entities.add(new Entity(new Vector2(7.5,3.5)));
-		screen = new Screen(WIDTH, HEIGHT);
+		screen = new Screen(WIDTH/Scale, HEIGHT/Scale);
 		camera = new Camera();
 		camera.setMap(map);
 		player = new Player(new Vector2(1.5, 1.5), 180, key, camera);
@@ -147,7 +149,7 @@ public class Main extends Canvas implements Runnable {
 	public void render() {
 		BufferStrategy bs = getBufferStrategy();
 		if (bs == null) {
-			createBufferStrategy(2);
+			createBufferStrategy(3);
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
@@ -156,7 +158,7 @@ public class Main extends Canvas implements Runnable {
 		screen.clear();
 		camera.render(screen);
 		player.render(screen);
-		for (int i = 0; i < WIDTH * HEIGHT; i++) {
+		for (int i = 0; i < (WIDTH/Scale) * (HEIGHT/Scale); i++) {
 			pixels[i] = screen.pixels[i];
 		}
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
