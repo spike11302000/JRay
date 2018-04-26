@@ -11,12 +11,13 @@ import java.awt.image.DataBufferInt;
 import javax.swing.JFrame;
 
 import com.ryan.jray.controls.Keyboard;
-import com.ryan.jray.entity.Entity;
 import com.ryan.jray.entity.Player;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.TextMap;
+import com.ryan.jray.network.Server;
+import com.ryan.jray.utils.Config;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
@@ -28,47 +29,75 @@ public class Main extends Canvas implements Runnable {
 	private JFrame frame;
 	private Thread thread;
 	private boolean running = false;
-	private BufferedImage image = new BufferedImage(WIDTH/Scale, HEIGHT/Scale, BufferedImage.TYPE_INT_RGB);
-	private int[] pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+	private BufferedImage image;
+	private int[] pixels;
+	public Config config;
 	public static Main game;
 	public static Screen screen;
 	public static Camera camera;
 	public static Map map;
+	public static String configPath;
 	public static Keyboard key;
 	public static Player player;
+	public static Server server;
+	public static boolean isServer = false;
 
 	public static void main(String[] args) {
+
+		if (args.length != 0)
+			if (args.length > 1) {
+				if (args[0].equals("server")) {
+					isServer = true;
+					configPath = args[1];
+				}
+					
+			}else {
+				System.out.println("Invalid Args");
+				System.out.println("java -jar jray.jar server [config file]");
+				System.exit(0);
+			}
+		
 		game = new Main();
-		game.frame = new JFrame();
-		game.frame.setResizable(false);
-		game.frame.setTitle(Main.TITLE);
-		game.frame.add(game);
-		game.frame.pack();
-		game.frame.setLocationRelativeTo(null);
-		game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		game.frame.setVisible(true);
+		if (!isServer) {
+			game.frame = new JFrame();
+			game.frame.setResizable(false);
+			game.frame.setTitle(Main.TITLE);
+			game.frame.add(game);
+			game.frame.pack();
+			game.frame.setLocationRelativeTo(null);
+			game.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			game.frame.setVisible(true);
+		}
 		game.start();
 	}
 
 	public Main() {
-		Dimension size = new Dimension(WIDTH, HEIGHT);
-		setPreferredSize(size);
-		setMinimumSize(size);
-		setMaximumSize(size);
-		// Map text = new TextMap("test.map");
-		key = new Keyboard();
-		map = new TextMap("test.map");
-		// map = new Map(10,10);
-		//map.entities.add(new Entity(new Vector2(2.5,9)));
-		
-		
-		//map.entities.add(new Entity(new Vector2(7.5,3.5)));
-		screen = new Screen(WIDTH/Scale, HEIGHT/Scale);
-		camera = new Camera();
-		camera.setMap(map);
-		player = new Player(new Vector2(1.5, 1.5), 180, key, camera);
-		player.setMap(map);
-		addKeyListener(key);
+		if (isServer) {
+			server = new Server();
+			server.map = new TextMap("test.map");
+
+		} else {
+			image = new BufferedImage(WIDTH / Scale, HEIGHT / Scale, BufferedImage.TYPE_INT_RGB);
+			pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+			Dimension size = new Dimension(WIDTH, HEIGHT);
+			setPreferredSize(size);
+			setMinimumSize(size);
+			setMaximumSize(size);
+			// Map text = new TextMap("test.map");
+			key = new Keyboard();
+			map = new TextMap("test.map");
+			// map = new Map(10,10);
+			// map.entities.add(new Entity(new Vector2(2.5,9)));
+
+			// map.entities.add(new Entity(new Vector2(7.5,3.5)));
+			screen = new Screen(WIDTH / Scale, HEIGHT / Scale);
+			camera = new Camera();
+			camera.setMap(map);
+			player = new Player(new Vector2(1.5, 1.5), 180, key, camera);
+			player.setMap(map);
+			addKeyListener(key);
+
+		}
 
 	}
 
@@ -111,12 +140,15 @@ public class Main extends Canvas implements Runnable {
 				updates++;
 				delta--;
 			}
-			render();
+			if (!isServer)
+				render();
 			frames++;
 
 			while (System.currentTimeMillis() - lastTimer > 1000) {
 				lastTimer += 1000;
-				frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
+				if (!isServer)
+					frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
+
 				fps = frames;
 				ups = updates;
 				frames = 0;
@@ -132,10 +164,14 @@ public class Main extends Canvas implements Runnable {
 	}
 
 	public void update() {
-		player.update();
-		key.update();
-		map.update();
-		camera.update();
+		if (isServer) {
+			server.update();
+		} else {
+			player.update();
+			key.update();
+			map.update();
+			camera.update();
+		}
 
 	}
 
@@ -153,14 +189,14 @@ public class Main extends Canvas implements Runnable {
 		screen.clear();
 		camera.render(screen);
 		player.render(screen);
-		for (int i = 0; i < (WIDTH/Scale) * (HEIGHT/Scale); i++) {
+		for (int i = 0; i < (WIDTH / Scale) * (HEIGHT / Scale); i++) {
 			pixels[i] = screen.pixels[i];
 		}
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		g.drawString(player.position.toString(), 5, 15);
-		g.drawString("Entities: "+map.entities.size(), 5, 30);
-		g.drawString("Lights: "+map.lights.size(), 5, 45);
-		g.drawString("Rays Per Frame: "+this.camera.rpf, 5, 60);
+		g.drawString("Entities: " + map.entities.size(), 5, 30);
+		g.drawString("Lights: " + map.lights.size(), 5, 45);
+		g.drawString("Rays Per Frame: " + this.camera.rpf, 5, 60);
 		g.dispose();
 		bs.show();
 	}
