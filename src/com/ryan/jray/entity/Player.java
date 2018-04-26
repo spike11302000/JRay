@@ -13,7 +13,10 @@ public class Player extends Entity {
 	private Camera cam;
 	public double speed;
 	public Map map;
-
+	public Player(Vector2 pos,double rot) {
+		this.position = pos;
+		this.rotation = rot;
+	}
 	public Player(Vector2 pos, double rot, Keyboard key, Camera cam) {
 		this.position = pos;
 		this.rotation = rot;
