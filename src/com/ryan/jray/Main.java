@@ -158,6 +158,9 @@ public class Main extends Canvas implements Runnable {
 		}
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 		g.drawString(player.position.toString(), 5, 15);
+		g.drawString("Entities: "+map.entities.size(), 5, 30);
+		g.drawString("Lights: "+map.lights.size(), 5, 45);
+		g.drawString("Rays Per Frame: "+this.camera.rpf, 5, 60);
 		g.dispose();
 		bs.show();
 	}

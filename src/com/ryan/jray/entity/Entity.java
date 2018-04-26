@@ -21,6 +21,9 @@ public class Entity {
 		this.size = size;
 
 	}
+	public void collide() {
+	
+	}
 	public void setSprite(int texID) {
 		this.textureID = texID;
 	}

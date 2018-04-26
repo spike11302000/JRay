@@ -14,6 +14,7 @@ public class RayCaster {
 	private Map map; // The current map.
 	private Vector2 rayVelocity = new Vector2(); // The ray's velocity.
 	public RayObject test = new RayObject(0, new MapObject(MapObjectType.COLOR, 0x0a0a0a));
+	public int counter = 0;
 
 	public RayCaster() {
 		this.position = new Vector2();
@@ -39,6 +40,7 @@ public class RayCaster {
 	}
 
 	public RayObject test(double angle) {
+		counter++;
 		this.rayPositon.x = this.position.x;// Setting the current position with the starting position.
 		this.rayPositon.y = this.position.y;
 		double rad = Math.toRadians(angle); // Convert degrees to radians.

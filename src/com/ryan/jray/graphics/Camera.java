@@ -15,8 +15,8 @@ public class Camera {
 	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .01);
 	public RayCaster lightCaster = new RayCaster(new Vector2(), 1d, .05);
 	private Map map;
-	private boolean light = false;
-
+	private boolean light = true;
+	public int rpf = 0; //rays per frame.
 	public Camera() {
 		this.position = new Vector2();
 		this.rotation = 0;
@@ -144,6 +144,9 @@ public class Camera {
 			}
 
 		}
+		this.rpf = this.rayCaster.counter+this.lightCaster.counter;
+		this.rayCaster.counter = 0;
+		this.lightCaster.counter = 0;
 	}
 
 	public void setMap(Map map) {

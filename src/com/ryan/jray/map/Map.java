@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import com.ryan.jray.entity.AnimatedEntity;
+import com.ryan.jray.entity.Bullet;
 import com.ryan.jray.entity.Entity;
 import com.ryan.jray.utils.Vector2;
 
@@ -38,11 +39,15 @@ public class Map {
 	}
 
 	public void update() {
-		for (Light l : this.lights) 
+		for (Light l : this.lights)
 			l.update();
-		for (Entity ent : this.entities) 
+		for (Entity ent : this.entities) {
 			ent.update();
-		
+			if (this.checkPoint(ent.position) != null)
+				ent.collide();
+
+		}
+
 		for (Entity ent : this.entities)
 			if (ent.isDestroyed()) {
 				this.entities.remove(ent);
