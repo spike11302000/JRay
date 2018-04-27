@@ -10,8 +10,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 import com.ryan.jray.map.Map;
-import com.ryan.jray.network.packet.Packet;
-import com.ryan.jray.network.packet.PacketMessage;
+import com.ryan.jray.network.packet.*;
 import com.ryan.jray.utils.Config;
 
 public class Server implements Runnable {
@@ -29,31 +28,48 @@ public class Server implements Runnable {
 			socket.setSoTimeout(10000);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Failed to start server, check to see if you have another app open on port: "
-					+ config.getString("port") + "!");
+			System.out.println("Failed to start server, check to see if you have another app open on port: " + config.getString("port") + "!");
 			System.exit(0);
 		}
 	}
 
-	public void update() throws IOException {
+	public void update() {
 		// System.out.println(this.clients.size());
 		for (int i = 0; i < this.clients.size(); i++) {
 			ServerClient c = this.clients.get(i);
-			System.out.println(c.objIn.available());
-			Packet packet = null;
+			// if(c.socket.getReuseAddress())c.disconnect=true;
 
-			try {
-				packet = (Packet) c.objIn.readObject();
-			} catch (ClassNotFoundException e) {
-				c.disconnect = true;
-			}
-			if (packet != null) {
-				if (packet instanceof PacketMessage)
-					System.out.println(((PacketMessage) packet).msg);
-			}
 			if (c.disconnect) {
-				System.out.println("User Disconnected: " + c.userName);
+				System.out.println(c.UserName+" left the server!");
 				this.clients.remove(c);
+			} else {
+
+				// System.out.println(c.objIn.available());
+				Packet packet = null;
+
+				try {
+					packet = (Packet) c.objIn.readObject();
+				} catch (ClassNotFoundException | IOException e) {
+					// TODO Auto-generated catch block
+					try {
+						c.socket.close();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					c.disconnect = true;
+					continue;
+					//e.printStackTrace();
+				}
+				
+				
+				if (packet instanceof PacketMessage){
+					System.out.println(((PacketMessage) packet).msg);
+				}else if(packet instanceof PacketJoin){
+					c.UserName = ((PacketJoin)packet).UserName;
+					System.out.println(c.UserName+" joined the server!");
+				}
+
 			}
 		}
 
@@ -68,8 +84,6 @@ public class Server implements Runnable {
 				ServerClient client = new ServerClient(server);
 				client.objOut = new ObjectOutputStream(server.getOutputStream());
 				client.objIn = new ObjectInputStream(server.getInputStream());
-
-				client.objOut.writeObject(new PacketMessage("hello world!"));
 				this.clients.add(client);
 			} catch (IOException e) {
 				// e.printStackTrace();

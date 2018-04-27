@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import com.ryan.jray.controls.Keyboard;
 import com.ryan.jray.entity.Player;
@@ -22,6 +23,7 @@ import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.TextMap;
 import com.ryan.jray.network.Server;
+import com.ryan.jray.network.packet.PacketJoin;
 import com.ryan.jray.network.packet.PacketMessage;
 import com.ryan.jray.utils.Config;
 import com.ryan.jray.utils.Vector2;
@@ -49,24 +51,25 @@ public class Main extends Canvas implements Runnable {
 	public static boolean isServer = false;
 	public static Socket client;
 	public ObjectOutputStream objOut;
+
 	public static void main(String[] args) {
-		
+
 		if (args.length != 0)
 			if (args.length > 1) {
 				if (args[0].equals("server")) {
 					isServer = true;
 					configPath = args[1];
 				}
-					
-			}else {
+
+			} else {
 				System.out.println("Invalid Args");
 				System.out.println("java -jar jray.jar server [config file]");
 				System.exit(0);
 			}
-		
+
 		game = new Main();
 		if (!isServer) {
-		
+
 			game.frame = new JFrame();
 			game.frame.setResizable(false);
 			game.frame.setTitle(Main.TITLE);
@@ -87,7 +90,7 @@ public class Main extends Canvas implements Runnable {
 			server.start();
 		} else {
 			try {
-				client = new Socket("localhost",1234);
+				client = new Socket("localhost", 1234);
 			} catch (UnknownHostException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -95,9 +98,15 @@ public class Main extends Canvas implements Runnable {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
+
 			try {
 				objOut = new ObjectOutputStream(client.getOutputStream());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				objOut.writeObject(new PacketJoin("Test123"));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -176,12 +185,7 @@ public class Main extends Canvas implements Runnable {
 				lastTimer += 1000;
 				if (!isServer) {
 					frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
-					try {
-						objOut.writeObject(new PacketMessage("test123"));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					
 				}
 				fps = frames;
 				ups = updates;
@@ -199,17 +203,15 @@ public class Main extends Canvas implements Runnable {
 
 	public void update() {
 		if (isServer) {
-			try {
-				server.update();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			server.update();
 		} else {
 			player.update();
 			key.update();
 			map.update();
 			camera.update();
+		if(key.keys[67]){
+			JOptionPane.showInputDialog("test");
+		}
 		}
 
 	}

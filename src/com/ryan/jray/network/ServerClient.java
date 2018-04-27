@@ -13,7 +13,7 @@ public class ServerClient {
 	public ObjectInputStream objIn;
 	public ObjectOutputStream objOut;
 	public boolean disconnect = false;
-	public String userName;
+	public String UserName;
 
 	public ServerClient(Socket socket) throws IOException {
 		this.socket = socket;
