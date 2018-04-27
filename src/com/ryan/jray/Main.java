@@ -8,6 +8,11 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import javax.swing.JFrame;
 
 import com.ryan.jray.controls.Keyboard;
@@ -17,14 +22,15 @@ import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.TextMap;
 import com.ryan.jray.network.Server;
+import com.ryan.jray.network.packet.PacketMessage;
 import com.ryan.jray.utils.Config;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
 	private static final long serialVersionUID = 7556956091489761808L;
-	public final int WIDTH = 600;
-	public final int HEIGHT = 400;
-	public final int Scale = 2;
+	public static int WIDTH = 600;
+	public static int HEIGHT = 400;
+	public static int Scale = 2;
 	public final static String TITLE = "JRay";
 	private JFrame frame;
 	private Thread thread;
@@ -41,9 +47,10 @@ public class Main extends Canvas implements Runnable {
 	public static Player player;
 	public static Server server;
 	public static boolean isServer = false;
-
+	public static Socket client;
+	public ObjectOutputStream objOut;
 	public static void main(String[] args) {
-
+		
 		if (args.length != 0)
 			if (args.length > 1) {
 				if (args[0].equals("server")) {
@@ -56,10 +63,10 @@ public class Main extends Canvas implements Runnable {
 				System.out.println("java -jar jray.jar server [config file]");
 				System.exit(0);
 			}
-		config = new Config("config.txt");
 		
 		game = new Main();
 		if (!isServer) {
+		
 			game.frame = new JFrame();
 			game.frame.setResizable(false);
 			game.frame.setTitle(Main.TITLE);
@@ -73,11 +80,31 @@ public class Main extends Canvas implements Runnable {
 	}
 
 	public Main() {
+		config = new Config(configPath);
 		if (isServer) {
-			server = new Server();
+			server = new Server(config);
 			server.map = new TextMap("test.map");
-
+			server.start();
 		} else {
+			try {
+				client = new Socket("localhost",1234);
+			} catch (UnknownHostException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			try {
+				objOut = new ObjectOutputStream(client.getOutputStream());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			WIDTH = config.getInt("width");
+			HEIGHT = config.getInt("height");
+			Scale = config.getInt("scale");
 			image = new BufferedImage(WIDTH / Scale, HEIGHT / Scale, BufferedImage.TYPE_INT_RGB);
 			pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 			Dimension size = new Dimension(WIDTH, HEIGHT);
@@ -147,9 +174,15 @@ public class Main extends Canvas implements Runnable {
 
 			while (System.currentTimeMillis() - lastTimer > 1000) {
 				lastTimer += 1000;
-				if (!isServer)
+				if (!isServer) {
 					frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
-
+					try {
+						objOut.writeObject(new PacketMessage("test123"));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 				fps = frames;
 				ups = updates;
 				frames = 0;
@@ -166,7 +199,12 @@ public class Main extends Canvas implements Runnable {
 
 	public void update() {
 		if (isServer) {
-			server.update();
+			try {
+				server.update();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else {
 			player.update();
 			key.update();

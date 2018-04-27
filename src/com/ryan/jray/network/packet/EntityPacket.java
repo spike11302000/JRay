@@ -4,8 +4,7 @@ import com.ryan.jray.entity.Entity;
 
 public class EntityPacket extends Packet {
 	public Entity entity;
-	public EntityPacket(String from,Entity ent) {
-		super(from);
+	public EntityPacket(Entity ent) {
 		this.entity = ent;
 	}
 
