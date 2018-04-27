@@ -31,12 +31,12 @@ public class Main extends Canvas implements Runnable {
 	private boolean running = false;
 	private BufferedImage image;
 	private int[] pixels;
-	public Config config;
+	public static Config config;
 	public static Main game;
 	public static Screen screen;
 	public static Camera camera;
 	public static Map map;
-	public static String configPath;
+	public static String configPath = "client.txt";
 	public static Keyboard key;
 	public static Player player;
 	public static Server server;
@@ -56,6 +56,7 @@ public class Main extends Canvas implements Runnable {
 				System.out.println("java -jar jray.jar server [config file]");
 				System.exit(0);
 			}
+		config = new Config("config.txt");
 		
 		game = new Main();
 		if (!isServer) {
