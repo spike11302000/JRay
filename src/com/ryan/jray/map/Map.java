@@ -15,6 +15,7 @@ public class Map {
 	public MapObject wall = new MapObject(MapObjectType.TEXTURE, 1);
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
 	public ArrayList<Light> lights = new ArrayList<Light>();
+	public ArrayList<Integer> removedEntities = new ArrayList<Integer>();
 
 	public Map() {
 		this.WIDTH = 0;
@@ -50,6 +51,7 @@ public class Map {
 
 		for (Entity ent : this.entities)
 			if (ent.isDestroyed()) {
+				this.removedEntities.add(ent.ID);
 				this.entities.remove(ent);
 				break;
 			}
@@ -63,6 +65,20 @@ public class Map {
 			return mo;
 		}
 		return null;
+	}
+
+	public void removeEntity(int id) {
+		for (int i = 0; i < this.entities.size(); i++)
+			if (this.entities.get(i).ID == id)
+				this.entities.remove(this.entities.get(i));
+	}
+
+	public int EntityIndex(int id) {
+		for (int i = 0; i < this.entities.size(); i++) {
+			if (id == this.entities.get(i).ID)
+				return i;
+		}
+		return -1;
 	}
 
 	public void swap(int i, int j) {

@@ -1,11 +1,16 @@
 package com.ryan.jray.entity;
 
 import com.ryan.jray.utils.Vector2;
+
+import java.io.IOException;
+
 import com.ryan.jray.controls.Keyboard;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.graphics.Sprite;
 import com.ryan.jray.map.Map;
+import com.ryan.jray.network.Client;
+import com.ryan.jray.network.packet.PacketEntity;
 
 public class Player extends Entity {
 	public double rotation;
@@ -13,10 +18,13 @@ public class Player extends Entity {
 	private Camera cam;
 	public double speed;
 	public Map map;
-	public Player(Vector2 pos,double rot) {
+	public Client client;
+
+	public Player(Vector2 pos, double rot) {
 		this.position = pos;
 		this.rotation = rot;
 	}
+
 	public Player(Vector2 pos, double rot, Keyboard key, Camera cam) {
 		this.position = pos;
 		this.rotation = rot;
@@ -67,14 +75,32 @@ public class Player extends Entity {
 				this.position.y += moveVel.x;
 		}
 
-		if (this.key.keys[32] && tick % 1 == 0)
-			map.entities.add(new Bullet(new Vector2(this.position.x + vel.x, this.position.y + vel.y), bulletVel));
+		if (this.key.keys[32] && tick % 10 == 0) {
+			Entity e = new Bullet(new Vector2(this.position.x + vel.x, this.position.y + vel.y), bulletVel);
+			map.entities.add(e);
+			if (this.client != null) {
+				try {
+					this.client.send(new PacketEntity(e));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}else {
+				
+			}
+		}
 		this.cam.position = this.position;
 		this.cam.rotation = this.rotation;
 	}
 
 	public void setMap(Map m) {
 		this.map = m;
+	}
+
+	public MPlayer getMPlayer() {
+		MPlayer mp = new MPlayer(this.position, this.rotation);
+		mp.ID = this.ID;
+		return mp;
 	}
 
 	public void render(Screen screen) {

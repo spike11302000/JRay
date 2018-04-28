@@ -9,6 +9,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -17,15 +18,24 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.ryan.jray.controls.Keyboard;
+import com.ryan.jray.entity.Entity;
+import com.ryan.jray.entity.MPlayer;
 import com.ryan.jray.entity.Player;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.TextMap;
+import com.ryan.jray.network.Client;
 import com.ryan.jray.network.Server;
+import com.ryan.jray.network.packet.Packet;
+import com.ryan.jray.network.packet.PacketEntity;
+import com.ryan.jray.network.packet.PacketEntityRemove;
 import com.ryan.jray.network.packet.PacketJoin;
 import com.ryan.jray.network.packet.PacketMessage;
+import com.ryan.jray.network.packet.PacketPing;
 import com.ryan.jray.utils.Config;
+import com.ryan.jray.utils.MathUtils;
+import com.ryan.jray.utils.Serializer;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
@@ -43,14 +53,13 @@ public class Main extends Canvas implements Runnable {
 	public static Main game;
 	public static Screen screen;
 	public static Camera camera;
-	public static Map map;
+	public Map map;
 	public static String configPath = "client.txt";
 	public static Keyboard key;
 	public static Player player;
 	public static Server server;
 	public static boolean isServer = false;
-	public static Socket client;
-	public ObjectOutputStream objOut;
+	public static Client client = new Client();
 
 	public static void main(String[] args) {
 
@@ -89,28 +98,7 @@ public class Main extends Canvas implements Runnable {
 			server.map = new TextMap("test.map");
 			server.start();
 		} else {
-			try {
-				client = new Socket("localhost", 1234);
-			} catch (UnknownHostException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
 
-			try {
-				objOut = new ObjectOutputStream(client.getOutputStream());
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			try {
-				objOut.writeObject(new PacketJoin("Test123"));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			WIDTH = config.getInt("width");
 			HEIGHT = config.getInt("height");
 			Scale = config.getInt("scale");
@@ -183,9 +171,10 @@ public class Main extends Canvas implements Runnable {
 
 			while (System.currentTimeMillis() - lastTimer > 1000) {
 				lastTimer += 1000;
+				// System.out.println(TITLE + " | " + updates + " ups, " + frames + " fps");
 				if (!isServer) {
 					frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
-					
+
 				}
 				fps = frames;
 				ups = updates;
@@ -201,17 +190,92 @@ public class Main extends Canvas implements Runnable {
 		System.out.println("setSize");
 	}
 
+	int tick = 0;
+
 	public void update() {
+		tick++;
 		if (isServer) {
 			server.update();
 		} else {
 			player.update();
 			key.update();
-			map.update();
+			if (!client.isConnected) {
+				map.update();
+			}
 			camera.update();
-		if(key.keys[67]){
-			JOptionPane.showInputDialog("test");
-		}
+			if (key.keys[67]) {
+				key.keys[67] = false;
+				String[] addr = JOptionPane.showInputDialog("Server Address:").split(":");
+				String username = JOptionPane.showInputDialog("UserName:");
+				if (addr.length == 2) {
+					client = new Client(addr[0], Integer.parseInt(addr[1]));
+					client.UserName = username;
+					player.client = client;
+					try {
+						client.send(new PacketJoin(client.UserName));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			if (client.isConnected) {
+				client.pingCounter--;
+
+				Packet packet = null;
+				try {
+					if (client.dataIn.available() > 0) {
+						packet = (Packet) new ObjectInputStream(client.dataIn).readObject();
+					}
+				} catch (ClassNotFoundException | IOException e) {
+					System.out.println("Lost connection to server!");
+					client.isConnected = false;
+					try {
+						client.socket.close();
+					} catch (IOException e1) {
+					}
+				}
+				if (client.pingCounter == 0) {
+					// client.isConnected = false;
+					System.out.println("Lost connection to server!");
+					// packet = null;
+				}
+				if (packet != null) {
+					if (packet instanceof PacketMessage) {
+						System.out.println(((PacketMessage) packet).msg);
+					} else if (packet instanceof PacketPing) {
+						client.pingCounter = 3600;
+						try {
+							client.send(new PacketPing());
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					} else if (packet instanceof PacketEntity) {
+						Entity ent = ((PacketEntity) packet).entity;
+						int index = this.map.EntityIndex(ent.ID);
+						if (ent.ID != Main.player.ID) {
+							if (index == -1) {
+								this.map.entities.add(ent);
+							} else {
+								Entity e = this.map.entities.get(index);
+								ent.position.x = MathUtils.lerp(ent.position.x, e.position.x, 0.5);
+								ent.position.y = MathUtils.lerp(ent.position.y, e.position.y, 0.5);
+								this.map.entities.set(index, ent);
+							}
+						}
+					} else if (packet instanceof PacketEntityRemove) {
+						int index = this.map.EntityIndex(((PacketEntityRemove) packet).EntityID);
+						if (index != -1)
+							this.map.entities.remove(index);
+					}
+				}
+				if (client.isConnected && tick % 4 == 0) {
+					try {
+						client.send(new PacketEntity(player.getMPlayer()));
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
+				}
+			}
 		}
 
 	}
@@ -237,7 +301,7 @@ public class Main extends Canvas implements Runnable {
 		g.drawString(player.position.toString(), 5, 15);
 		g.drawString("Entities: " + map.entities.size(), 5, 30);
 		g.drawString("Lights: " + map.lights.size(), 5, 45);
-		g.drawString("Rays Per Frame: " + this.camera.rpf, 5, 60);
+		g.drawString("Rays Per Frame: " + Main.camera.rpf, 5, 60);
 		g.dispose();
 		bs.show();
 	}
