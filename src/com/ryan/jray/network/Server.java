@@ -5,6 +5,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -20,16 +22,17 @@ import com.ryan.jray.utils.Serializer;
 public class Server implements Runnable {
 	public Map map;
 	public Config config;
-	private Thread t;
 	public ArrayList<ServerClient> clients = new ArrayList<ServerClient>();
-	private ServerSocket socket;
+
+	private Thread t;
+	private byte[] buffer = new byte[1024 * 2];
+	private DatagramSocket socket;
 
 	public Server(Config cfg) {
 		this.config = cfg;
 		System.out.println(config);
 		try {
-			socket = new ServerSocket(config.getInt("port"));
-			socket.setSoTimeout(10000);
+			socket = new DatagramSocket(this.config.getInt("port"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("Failed to start server, check to see if you have another app open on port: "
@@ -44,99 +47,46 @@ public class Server implements Runnable {
 		map.update();
 		// System.out.println(this.clients.size());
 		tick++;
-		for (int ii = 0; ii < this.clients.size(); ii++) {
-			ServerClient c = this.clients.get(ii);
-			Packet packet = null;
+		for (int i = 0; i < this.clients.size(); i++) {
+			ServerClient c = this.clients.get(i);
 			c.pingCounter--;
-			// if(c.socket.getReuseAddress())c.disconnect=true;
-			// if();
-
-			if (c.pingCounter == 3000) {
+			if (c.pingCounter <= 0)
+				c.isConnected = false;
+			if (!c.isConnected) {
 				try {
-					c.send(new PacketPing());
+					System.out.println(c.from+" left the game.");
+					this.broadcast(new PacketMessage(c.from+" left the game."));
 				} catch (IOException e) {
-					c.disconnect = true;
-					continue;
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-			}
-			if (tick % 4 == 0) {
-				for(int i=0;i<this.map.removedEntities.size();i++) {
-					try {
-						c.send(new PacketEntityRemove(this.map.removedEntities.get(i)));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				this.map.removedEntities.clear();
-				for (int i = 0; i < this.map.entities.size(); i++) {
-					try {
-						c.send(new PacketEntity(this.map.entities.get(i)));
-					} catch (IOException e) {
-						c.disconnect = true;
-						continue;
-					}
-				}
-			}
-
-			if (c.pingCounter == 0) {
-				c.disconnect = true;
+				this.map.removedEntities.add(c.player.ID);
+				this.map.entities.remove(c.player);
+				this.clients.remove(c);
 				continue;
 			}
-			if (c.disconnect) {
-				System.out.println(c.UserName + " left the server!");
-				this.clients.remove(c);
-				this.map.removeEntity(c.player.ID);
+		}
+	
+		if (tick % 1 == 0) {
+			for (int i = 0; i < this.map.removedEntities.size(); i++) {
 				try {
-
-					broadcast(new PacketMessage(c.UserName + " left the server!"));
+					this.broadcast(new PacketEntityRemove(this.map.removedEntities.get(i)));
 				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
-
-			} else {
-
-				// System.out.println(c.objIn.available());
-
+			}
+			this.map.removedEntities.clear();
+			for (int i = 0; i < this.map.entities.size(); i++) {
 				try {
-					// System.out.println(c.dataIn.available());
-					if (c.dataIn.available() == 0)
-						continue;
-
-					packet = (Packet) new ObjectInputStream(c.dataIn).readObject();
-
-				} catch (ClassNotFoundException | IOException e) {
-
-					c.disconnect = true;
-					continue;
-				}
-
-				if (packet instanceof PacketMessage) {
-					System.out.println(((PacketMessage) packet).msg);
-				} else if (packet instanceof PacketJoin) {
-					c.UserName = ((PacketJoin) packet).UserName;
-					System.out.println(c.UserName + " joined the server!");
-					try {
-						broadcast(new PacketMessage(c.UserName + " joined the server!"));
-					} catch (IOException e) {
-					}
-				} else if (packet instanceof PacketPing) {
-					c.pingCounter = 3600;
-				} else if (packet instanceof PacketEntity) {
-					Entity ent = ((PacketEntity) packet).entity;
-					if (ent instanceof MPlayer)
-						c.player = (MPlayer) ent;
-
-					int index = this.map.EntityIndex(ent.ID);
-					if (index == -1) {
-						this.map.entities.add(ent);
-					} else {
-						this.map.entities.get(index).position = ent.position;
-					}
+					this.broadcast(new PacketEntity(this.map.entities.get(i)));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 			}
 		}
-
 	}
 
 	public void broadcast(Packet packet) throws IOException {
@@ -150,14 +100,62 @@ public class Server implements Runnable {
 		System.out.println("test");
 		while (true) {
 			try {
-				Socket server = socket.accept();
-				System.out.println("Client Connected: " + server.getLocalAddress());
-				ServerClient client = new ServerClient(server);
-				client.dataOut = new DataOutputStream(server.getOutputStream());
-				client.dataIn = new DataInputStream(server.getInputStream());
-				this.clients.add(client);
-			} catch (IOException e) {
+				DatagramPacket packet = new DatagramPacket(this.buffer, this.buffer.length);
+				socket.receive(packet);
+				this.handlePacket(packet);
+			} catch (IOException | ClassNotFoundException e) {
 				// e.printStackTrace();
+			}
+		}
+	}
+
+	public ServerClient getClient(String from) {
+		for (int ii = 0; ii < this.clients.size(); ii++) {
+			if (this.clients.get(ii).from.equals(from))
+				return this.clients.get(ii);
+		}
+		return null;
+	}
+
+	public void handlePacket(DatagramPacket p) throws IOException, ClassNotFoundException {
+		Packet packet = (Packet) Serializer.deserialize(p.getData());
+		if (packet == null) {
+			System.out.println("null packet");
+			return;
+		}
+		if (packet instanceof PacketJoin && packet.from != null) {
+
+			boolean exist = false;
+			for (int ii = 0; ii < this.clients.size(); ii++) {
+				if (this.clients.get(ii).from.equals(packet.from))
+					exist = true;
+			}
+			if (!exist) {
+				ServerClient c = new ServerClient(this.socket, p.getAddress(), p.getPort(), packet.from);
+				this.clients.add(c);
+				System.out.println(c.from + " joined the server!");
+				broadcast(new PacketMessage(c.from + " joined the server!"));
+
+			}
+			return;
+		}
+		ServerClient c = this.getClient(packet.from);
+		if (c == null)
+			return;
+		c.pingCounter=300;
+		if (packet instanceof PacketMessage) {
+			System.out.println(((PacketMessage) packet).msg);
+		} else if (packet instanceof PacketEntity) {
+			// System.out.println("test123");
+			Entity ent = ((PacketEntity) packet).entity;
+			if (ent instanceof MPlayer)
+				c.player = (MPlayer) ent;
+
+			int index = this.map.EntityIndex(ent.ID);
+			if (index == -1) {
+				this.map.entities.add(ent);
+			} else {
+				this.map.entities.get(index).position = ent.position;
 			}
 		}
 	}

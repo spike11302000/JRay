@@ -19,7 +19,7 @@ public class Player extends Entity {
 	public double speed;
 	public Map map;
 	public Client client;
-
+	public String username;
 	public Player(Vector2 pos, double rot) {
 		this.position = pos;
 		this.rotation = rot;
@@ -80,7 +80,7 @@ public class Player extends Entity {
 			map.entities.add(e);
 			if (this.client != null) {
 				try {
-					this.client.send(new PacketEntity(e));
+					this.client.send(new PacketEntity(e,this.username));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

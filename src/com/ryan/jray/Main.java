@@ -199,83 +199,28 @@ public class Main extends Canvas implements Runnable {
 		} else {
 			player.update();
 			key.update();
-			if (!client.isConnected) {
-				map.update();
-			}
 			camera.update();
+			if (client.isConnected)
+				client.update();
 			if (key.keys[67]) {
 				key.keys[67] = false;
 				String[] addr = JOptionPane.showInputDialog("Server Address:").split(":");
 				String username = JOptionPane.showInputDialog("UserName:");
 				if (addr.length == 2) {
+					System.out.println("connecting");
 					client = new Client(addr[0], Integer.parseInt(addr[1]));
-					client.UserName = username;
-					player.client = client;
+					this.player.username = username;
+					client.map = map;
+					client.player = player;
+					client.start();
 					try {
-						client.send(new PacketJoin(client.UserName));
+						client.send(new PacketJoin(this.player.username));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
 			}
-			if (client.isConnected) {
-				client.pingCounter--;
 
-				Packet packet = null;
-				try {
-					if (client.dataIn.available() > 0) {
-						packet = (Packet) new ObjectInputStream(client.dataIn).readObject();
-					}
-				} catch (ClassNotFoundException | IOException e) {
-					System.out.println("Lost connection to server!");
-					client.isConnected = false;
-					try {
-						client.socket.close();
-					} catch (IOException e1) {
-					}
-				}
-				if (client.pingCounter == 0) {
-					// client.isConnected = false;
-					System.out.println("Lost connection to server!");
-					// packet = null;
-				}
-				if (packet != null) {
-					if (packet instanceof PacketMessage) {
-						System.out.println(((PacketMessage) packet).msg);
-					} else if (packet instanceof PacketPing) {
-						client.pingCounter = 3600;
-						try {
-							client.send(new PacketPing());
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-					} else if (packet instanceof PacketEntity) {
-						Entity ent = ((PacketEntity) packet).entity;
-						int index = this.map.EntityIndex(ent.ID);
-						if (ent.ID != Main.player.ID) {
-							if (index == -1) {
-								this.map.entities.add(ent);
-							} else {
-								Entity e = this.map.entities.get(index);
-								ent.position.x = MathUtils.lerp(ent.position.x, e.position.x, 0.5);
-								ent.position.y = MathUtils.lerp(ent.position.y, e.position.y, 0.5);
-								this.map.entities.set(index, ent);
-							}
-						}
-					} else if (packet instanceof PacketEntityRemove) {
-						int index = this.map.EntityIndex(((PacketEntityRemove) packet).EntityID);
-						if (index != -1)
-							this.map.entities.remove(index);
-					}
-				}
-				if (client.isConnected && tick % 4 == 0) {
-					try {
-						client.send(new PacketEntity(player.getMPlayer()));
-					} catch (IOException e2) {
-						e2.printStackTrace();
-					}
-				}
-			}
 		}
 
 	}

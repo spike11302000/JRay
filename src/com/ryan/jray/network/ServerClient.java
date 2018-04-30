@@ -3,7 +3,9 @@ package com.ryan.jray.network;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 
 import com.ryan.jray.entity.MPlayer;
 import com.ryan.jray.entity.Player;
@@ -12,18 +14,26 @@ import com.ryan.jray.utils.Serializer;
 
 public class ServerClient {
 
-	public Socket socket;
-	public DataInputStream dataIn;
-	public DataOutputStream dataOut;
-	public boolean disconnect = false;
+	public DatagramSocket socket;
+	public boolean isConnected = true;
 	public String UserName;
-	public int pingCounter = 3600;
+	public int pingCounter = 300;
 	public MPlayer player;
-	public ServerClient(Socket socket) throws IOException {
-		this.socket = socket;
+	public int port;
+	public InetAddress address;
+	public String from;
 
+	public ServerClient(DatagramSocket socket,InetAddress addr, int port, String from) throws IOException {
+		this.socket = socket;
+		this.address = addr;
+		this.port = port;
+		this.from = from;
 	}
+
 	public void send(Packet packet) throws IOException {
-		this.dataOut.write(Serializer.serialize(packet));
+		byte[] buf = Serializer.serialize(packet);
+		DatagramPacket p = new DatagramPacket(buf, buf.length, address, port);
+		this.socket.send(p);
+		// this.dataOut.write(Serializer.serialize(packet));
 	}
 }
