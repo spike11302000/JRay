@@ -10,7 +10,9 @@ public class Entity implements Serializable{
 	public Vector2 position;
 	public Vector2 size;
 	public int textureID;
+	public int health;
 	private boolean destroyed = false;
+	public String Owner;
 	public Entity() {
 		this.ID = new Random().nextInt(0xfffffff);
 		this.position = new Vector2();

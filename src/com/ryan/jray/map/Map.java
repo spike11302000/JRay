@@ -42,19 +42,24 @@ public class Map {
 	public void update() {
 		for (Light l : this.lights)
 			l.update();
-		for (Entity ent : this.entities) {
-			ent.update();
-			if (this.checkPoint(ent.position) != null)
-				ent.collide();
 
+		for (int i = 0; i < this.entities.size(); i++) {
+			Entity ent = this.entities.get(i);
+			if (ent != null) {
+				ent.update();
+				if (this.checkPoint(ent.position) != null)
+					ent.collide();
+			}
 		}
 
-		for (Entity ent : this.entities)
+		for (int i = 0; i < this.entities.size(); i++) {
+			Entity ent = this.entities.get(i);
 			if (ent.isDestroyed()) {
 				this.removedEntities.add(ent.ID);
 				this.entities.remove(ent);
 				break;
 			}
+		}
 	}
 
 	public MapObject checkPoint(Vector2 pos) {
@@ -69,14 +74,17 @@ public class Map {
 
 	public void removeEntity(int id) {
 		for (int i = 0; i < this.entities.size(); i++)
-			if (this.entities.get(i).ID == id)
+			if (this.entities.get(i).ID == id) {
+				this.removedEntities.add(this.entities.get(i).ID);
 				this.entities.remove(this.entities.get(i));
+			}
 	}
 
 	public int EntityIndex(int id) {
 		for (int i = 0; i < this.entities.size(); i++) {
-			if (id == this.entities.get(i).ID)
-				return i;
+			if (this.entities.get(i) != null)
+				if (id == this.entities.get(i).ID)
+					return i;
 		}
 		return -1;
 	}
@@ -91,10 +99,12 @@ public class Map {
 		int min;
 		for (int i = 0; i < this.entities.size(); ++i) {
 			min = i;
-			for (int j = i + 1; j < this.entities.size(); ++j)
+			for (int j = i + 1; j < this.entities.size(); ++j) {
+				if (this.entities.get(j) == null || this.entities.get(min) == null)
+					return;
 				if (this.entities.get(j).position.distance(pos) > this.entities.get(min).position.distance(pos))
 					min = j;
-
+			}
 			swap(i, min);
 		}
 	}

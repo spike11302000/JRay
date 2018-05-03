@@ -17,7 +17,7 @@ public class ServerClient {
 	public DatagramSocket socket;
 	public boolean isConnected = true;
 	public String UserName;
-	public int pingCounter = 300;
+	public int pingCounter = 600;
 	public MPlayer player;
 	public int port;
 	public InetAddress address;

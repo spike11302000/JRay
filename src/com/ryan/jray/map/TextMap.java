@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.ryan.jray.utils.Color;
+import com.ryan.jray.utils.Logger;
 import com.ryan.jray.utils.Vector2;
 
 public class TextMap extends Map {
@@ -20,7 +20,7 @@ public class TextMap extends Map {
 		size = size.toLowerCase();
 		String w = size.substring(0, size.indexOf("x"));
 		String h = size.substring(size.indexOf("x") + 1, size.length());
-		System.out.println("Loading map: " + path + " with a size of: " + w + "x" + h);
+		Logger.println("Loading map: " + path + " with a size of: " + w + "x" + h,Logger.SYSTEM);
 		this.WIDTH = Integer.parseInt(w);
 		this.HEIGHT = Integer.parseInt(h);
 		this.map = new MapObject[this.WIDTH * this.HEIGHT];

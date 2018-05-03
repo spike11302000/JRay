@@ -9,17 +9,10 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 import com.ryan.jray.controls.Keyboard;
-import com.ryan.jray.entity.Entity;
-import com.ryan.jray.entity.MPlayer;
 import com.ryan.jray.entity.Player;
 import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
@@ -27,15 +20,9 @@ import com.ryan.jray.map.Map;
 import com.ryan.jray.map.TextMap;
 import com.ryan.jray.network.Client;
 import com.ryan.jray.network.Server;
-import com.ryan.jray.network.packet.Packet;
-import com.ryan.jray.network.packet.PacketEntity;
-import com.ryan.jray.network.packet.PacketEntityRemove;
+import com.ryan.jray.utils.Logger;
 import com.ryan.jray.network.packet.PacketJoin;
-import com.ryan.jray.network.packet.PacketMessage;
-import com.ryan.jray.network.packet.PacketPing;
 import com.ryan.jray.utils.Config;
-import com.ryan.jray.utils.MathUtils;
-import com.ryan.jray.utils.Serializer;
 import com.ryan.jray.utils.Vector2;
 
 public class Main extends Canvas implements Runnable {
@@ -56,10 +43,11 @@ public class Main extends Canvas implements Runnable {
 	public Map map;
 	public static String configPath = "client.txt";
 	public static Keyboard key;
-	public static Player player;
+	public Player player;
 	public static Server server;
 	public static boolean isServer = false;
-	public static Client client = new Client();
+	public static boolean isClient = true;
+	public Client client = new Client();
 
 	public static void main(String[] args) {
 
@@ -67,6 +55,7 @@ public class Main extends Canvas implements Runnable {
 			if (args.length > 1) {
 				if (args[0].equals("server")) {
 					isServer = true;
+					isClient = false;
 					configPath = args[1];
 				}
 
@@ -95,9 +84,11 @@ public class Main extends Canvas implements Runnable {
 		config = new Config(configPath);
 		if (isServer) {
 			server = new Server(config);
-			server.map = new TextMap("test.map");
+			// server.map = new TextMap("test.map");
 			server.start();
-		} else {
+
+		}
+		if (isClient) {
 
 			WIDTH = config.getInt("width");
 			HEIGHT = config.getInt("height");
@@ -108,17 +99,16 @@ public class Main extends Canvas implements Runnable {
 			setPreferredSize(size);
 			setMinimumSize(size);
 			setMaximumSize(size);
-			// Map text = new TextMap("test.map");
 			key = new Keyboard();
-			map = new TextMap("test.map");
-			// map = new Map(10,10);
+			map = new TextMap("loading.map");
+			// map = new Map(10, 10);
 			// map.entities.add(new Entity(new Vector2(2.5,9)));
 
 			// map.entities.add(new Entity(new Vector2(7.5,3.5)));
 			screen = new Screen(WIDTH / Scale, HEIGHT / Scale);
 			camera = new Camera();
 			camera.setMap(map);
-			player = new Player(new Vector2(1.5, 1.5), 180, key, camera);
+			player = new Player(new Vector2(5, 5), 180, key, camera);
 			player.setMap(map);
 			addKeyListener(key);
 
@@ -130,7 +120,7 @@ public class Main extends Canvas implements Runnable {
 		if (running)
 			return;
 		running = true;
-		thread = new Thread(this, "GameThread");
+		thread = new Thread(this, "Game Thread");
 		thread.start();
 	}
 
@@ -165,14 +155,14 @@ public class Main extends Canvas implements Runnable {
 				updates++;
 				delta--;
 			}
-			if (!isServer)
+			if (!isServer || isClient)
 				render();
 			frames++;
 
 			while (System.currentTimeMillis() - lastTimer > 1000) {
 				lastTimer += 1000;
 				// System.out.println(TITLE + " | " + updates + " ups, " + frames + " fps");
-				if (!isServer) {
+				if (!isServer || isClient) {
 					frame.setTitle(TITLE + " | " + updates + " ups, " + frames + " fps");
 
 				}
@@ -196,28 +186,66 @@ public class Main extends Canvas implements Runnable {
 		tick++;
 		if (isServer) {
 			server.update();
-		} else {
+		}
+		if (isClient) {
+
+			map.update();
 			player.update();
 			key.update();
 			camera.update();
-			if (client.isConnected)
+			if (client.isConnected) {
 				client.update();
-			if (key.keys[67]) {
-				key.keys[67] = false;
+				if (client.mapUpdate) {
+					this.client.mapUpdate = false;
+					this.map = client.map;
+					this.camera.setMap(client.map);
+					this.player.setMap(client.map);
+				}
+			}
+			if (key.keys[74]) {
+				key.keys[74] = false;
 				String[] addr = JOptionPane.showInputDialog("Server Address:").split(":");
 				String username = JOptionPane.showInputDialog("UserName:");
 				if (addr.length == 2) {
-					System.out.println("connecting");
+
+					Logger.println("Connecting", Logger.GAME);
+					this.map.entities.clear();
 					client = new Client(addr[0], Integer.parseInt(addr[1]));
 					this.player.username = username;
 					client.map = map;
 					client.player = player;
+					this.player.Owner = username;
+					player.client = client;
 					client.start();
 					try {
 						client.send(new PacketJoin(this.player.username));
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+				}
+			}
+			if (key.keys[72]) {
+				key.keys[72] = false;
+				// int port = Integer.parseInt(JOptionPane.showInputDialog("Server Address:"));
+				String username = JOptionPane.showInputDialog("UserName:");
+
+				// starting server
+				server = new Server(new Config("server.txt"));
+				server.map = new TextMap("test.map");
+				server.start();
+				isServer = true;
+				Logger.println("connecting", Logger.GAME);
+				this.map.entities.clear();
+				client = new Client("localhost", server.config.getInt("port"));
+				this.player.username = username;
+				client.map = map;
+				client.player = player;
+				player.client = client;
+				client.start();
+				try {
+					client.send(new PacketJoin(this.player.username));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 
@@ -242,11 +270,19 @@ public class Main extends Canvas implements Runnable {
 		for (int i = 0; i < (WIDTH / Scale) * (HEIGHT / Scale); i++) {
 			pixels[i] = screen.pixels[i];
 		}
+		int offset = 0;
 		g.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-		g.drawString(player.position.toString(), 5, 15);
-		g.drawString("Entities: " + map.entities.size(), 5, 30);
-		g.drawString("Lights: " + map.lights.size(), 5, 45);
-		g.drawString("Rays Per Frame: " + Main.camera.rpf, 5, 60);
+		g.drawString(player.position.toString(), 5, offset += 15);
+		g.drawString("Entities: " + map.entities.size(), 5, offset += 15);
+		g.drawString("Lights: " + map.lights.size(), 5, offset += 15);
+		g.drawString("Rays Per Frame: " + Main.camera.rpf, 5, offset += 15);
+		g.drawString("isConnected: " + this.client.isConnected, 5, offset += 15);
+		if (this.client.isConnected) {
+			g.drawString("Connected: " + this.client.address.toString() + ":" + this.client.port + " "
+					+ this.client.pingCounter, 5, offset += 15);
+		}
+		g.drawString("Health: " + this.player.health, 5, offset += 15);
+
 		g.dispose();
 		bs.show();
 	}

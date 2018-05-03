@@ -4,6 +4,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import com.ryan.jray.utils.Logger;
+
 public class SpriteSheet {
 	private String path;
 	public final int SIZE;
@@ -23,7 +25,7 @@ public class SpriteSheet {
 			int w = image.getWidth();
 			int h = image.getHeight();
 			image.getRGB(0, 0, w, h, pixels, 0, w);
-			System.out.println("Loaded: " + path);
+			Logger.println("Loaded: " + path,Logger.SYSTEM);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

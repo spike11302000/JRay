@@ -20,6 +20,7 @@ public class Player extends Entity {
 	public Map map;
 	public Client client;
 	public String username;
+	public boolean isAlive = true;
 	public Player(Vector2 pos, double rot) {
 		this.position = pos;
 		this.rotation = rot;
@@ -49,37 +50,39 @@ public class Player extends Entity {
 				|| (this.key.down && this.key.right))
 			moveVel.div(new Vector2(2, 2));
 
-		if (this.key.up) {
+		if (this.key.up&&isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x + (moveVel.x * 4), this.position.y)) == null)
 				this.position.x += moveVel.x;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.y * 4))) == null)
 				this.position.y += moveVel.y;
 		}
 
-		if (this.key.down) {
+		if (this.key.down&&isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x - (moveVel.x * 4), this.position.y)) == null)
 				this.position.x -= moveVel.x;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.y * 4))) == null)
 				this.position.y -= moveVel.y;
 		}
-		if (this.key.left) {
+		if (this.key.left&&isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x + (moveVel.y * 4), this.position.y)) == null)
 				this.position.x += moveVel.y;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.x * 4))) == null)
 				this.position.y -= moveVel.x;
 		}
-		if (this.key.right) {
+		if (this.key.right&&isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x - (moveVel.y * 4), this.position.y)) == null)
 				this.position.x -= moveVel.y;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.x * 4))) == null)
 				this.position.y += moveVel.x;
 		}
 
-		if (this.key.keys[32] && tick % 10 == 0) {
+		if (this.key.keys[32] && tick % 1 == 0) {
 			Entity e = new Bullet(new Vector2(this.position.x + vel.x, this.position.y + vel.y), bulletVel);
+			
 			map.entities.add(e);
 			if (this.client != null) {
 				try {
+					e.Owner = this.client.player.Owner;
 					this.client.send(new PacketEntity(e,this.username));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
@@ -100,6 +103,7 @@ public class Player extends Entity {
 	public MPlayer getMPlayer() {
 		MPlayer mp = new MPlayer(this.position, this.rotation);
 		mp.ID = this.ID;
+		mp.Owner = this.Owner;
 		return mp;
 	}
 
