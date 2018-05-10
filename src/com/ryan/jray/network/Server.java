@@ -55,12 +55,29 @@ public class Server implements Runnable {
 		for (int i = 0; i < this.clients.size(); i++) {
 			ServerClient c = this.clients.get(i);
 			c.pingCounter--;
+			if (!c.isAlive) {
+				c.respawnTimer++;
+			} else {
+				c.respawnTimer = 0;
+			}
+			if (c.respawnTimer >= 60.0 * config.getDouble("respawn-time")) {
+				c.player.health = 100;
+				this.map.entities.get(this.map.EntityIndex(c.player.ID)).health = 100;
+				try {
+					c.send(new PacketSetPlayer(this.map.getSpawnPoint(), 0, 100));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				c.player.health = 100;
+				c.isAlive = true;
+			}
 			if (c.pingCounter <= 0)
 				c.isConnected = false;
 			if (!c.isConnected) {
 				try {
-					System.out.println(c.from + " left the game.");
-					this.broadcast(new PacketMessage(c.from + " left the game."));
+					System.out.println(c.username + " left the game.");
+					this.broadcast(new PacketMessage(c.username + " left the game."));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -81,18 +98,32 @@ public class Server implements Runnable {
 		}
 		for (int i = 0; i < this.map.entities.size(); i++) {
 			if (this.map.entities.get(i) instanceof Bullet) {
-				
+
 				Bullet b = (Bullet) this.map.entities.get(i);
 				for (int ii = 0; ii < this.clients.size(); ii++) {
 					ServerClient c = this.clients.get(ii);
 					if (c.player.position.distance(b.position) < .5 && b.Owner != c.player.Owner) {
 						c.player.health--;
-						
 						this.map.entities.get(this.map.EntityIndex(c.player.ID)).health--;
-						//Logger.println("Bullet", Logger.DEBUG);
+						if (this.map.entities.get(this.map.EntityIndex(c.player.ID)).health <= 0) {
+							if (c.isAlive) {
+								try {
+									this.broadcast(new PacketMessage(c.username+ " was killed by " + b.Owner));
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+							c.isAlive = false;
+
+						} else {
+							c.isAlive = true;
+						}
+						// Logger.println("Bullet", Logger.DEBUG);
 						b.destroy();
+
 						try {
-							c.send(new PacketSetPlayer(null, -1, this.map.entities.get(this.map.EntityIndex(c.player.ID)).health));
+							c.send(new PacketSetPlayer(null, -1,
+									this.map.entities.get(this.map.EntityIndex(c.player.ID)).health));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -112,8 +143,9 @@ public class Server implements Runnable {
 			}
 			this.map.removedEntities.clear();
 			for (int i = 0; i < this.map.entities.size(); i++) {
+				Entity ent = this.map.entities.get(i);
 				try {
-					this.broadcast(new PacketEntity(this.map.entities.get(i)));
+					this.broadcast(new PacketEntity(ent));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -141,9 +173,9 @@ public class Server implements Runnable {
 		}
 	}
 
-	public ServerClient getClient(String from) {
+	public ServerClient getClient(String username) {
 		for (int ii = 0; ii < this.clients.size(); ii++) {
-			if (this.clients.get(ii).from.equals(from))
+			if (this.clients.get(ii).username.equals(username))
 				return this.clients.get(ii);
 		}
 		return null;
@@ -159,16 +191,17 @@ public class Server implements Runnable {
 
 			boolean exist = false;
 			for (int ii = 0; ii < this.clients.size(); ii++) {
-				if (this.clients.get(ii).from.equals(packet.from))
+				if (this.clients.get(ii).username.equals(packet.from))
 					exist = true;
 			}
 			if (!exist) {
 				ServerClient c = new ServerClient(this.socket, p.getAddress(), p.getPort(), packet.from);
 				this.clients.add(c);
-				Logger.println(c.from + " joined the server!", Logger.SERVER);
-				broadcast(new PacketMessage(c.from + " joined the server!"));
+				
+				Logger.println(c.username + " joined the server!", Logger.SERVER);
+				broadcast(new PacketMessage(c.username + " joined the server!"));
 				c.send(new PacketMap(CurrentMap + ".map"));
-				c.send(new PacketSetPlayer(new Vector2(2, 9), 0, 100));
+				c.send(new PacketSetPlayer(this.map.getSpawnPoint(), 0, 100));
 			}
 			return;
 		}
@@ -183,8 +216,8 @@ public class Server implements Runnable {
 			Entity ent = ((PacketEntity) packet).entity;
 			if (ent instanceof MPlayer) {
 				c.player = (MPlayer) ent;
-				if(c.player.health!=ent.health) {
-					c.send(new PacketSetPlayer(null,-1, c.player.health));
+				if (c.player.health != ent.health) {
+					c.send(new PacketSetPlayer(null, -1, c.player.health));
 				}
 			}
 			int index = this.map.EntityIndex(ent.ID);

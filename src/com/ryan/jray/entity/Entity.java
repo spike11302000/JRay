@@ -13,6 +13,7 @@ public class Entity implements Serializable{
 	public int health;
 	private boolean destroyed = false;
 	public String Owner;
+	public boolean display = true;
 	public Entity() {
 		this.ID = new Random().nextInt(0xfffffff);
 		this.position = new Vector2();

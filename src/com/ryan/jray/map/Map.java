@@ -1,6 +1,7 @@
 package com.ryan.jray.map;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import com.ryan.jray.entity.AnimatedEntity;
@@ -13,9 +14,13 @@ public class Map {
 	public int HEIGHT;
 	public MapObject[] map;
 	public MapObject wall = new MapObject(MapObjectType.TEXTURE, 1);
+	public Random random = new Random();
 	public ArrayList<Entity> entities = new ArrayList<Entity>();
 	public ArrayList<Light> lights = new ArrayList<Light>();
 	public ArrayList<Integer> removedEntities = new ArrayList<Integer>();
+
+	public ArrayList<Vector2> blueSpawnPoints = new ArrayList<Vector2>();
+	public ArrayList<Vector2> redSpawnPoints = new ArrayList<Vector2>();
 
 	public Map() {
 		this.WIDTH = 0;
@@ -54,6 +59,8 @@ public class Map {
 
 		for (int i = 0; i < this.entities.size(); i++) {
 			Entity ent = this.entities.get(i);
+			if (ent != null)
+				break;
 			if (ent.isDestroyed()) {
 				this.removedEntities.add(ent.ID);
 				this.entities.remove(ent);
@@ -62,12 +69,31 @@ public class Map {
 		}
 	}
 
+	public Vector2 getSpawnPoint() {
+		ArrayList<Vector2> tmp = new ArrayList<Vector2>();
+		tmp.addAll(this.redSpawnPoints);
+		tmp.addAll(this.blueSpawnPoints);
+		Collections.shuffle(tmp);
+		Collections.shuffle(tmp);
+		Collections.shuffle(tmp);// just to make sure its well shuffled
+		return tmp.get(random.nextInt(tmp.size()));
+	}
+
+	public Vector2 getSpawnPoint(boolean team) {// blue: false, red: true
+		if (team)
+			return this.redSpawnPoints.get(random.nextInt(this.redSpawnPoints.size()));
+		else
+			return this.blueSpawnPoints.get(random.nextInt(this.blueSpawnPoints.size()));
+	}
+
 	public MapObject checkPoint(Vector2 pos) {
 
 		if (pos.x > 0 && pos.y > 0 && pos.x < this.WIDTH && pos.y < this.HEIGHT) {
+
 			int index = (int) Math.floor(pos.x) + ((int) Math.floor(pos.y) * this.WIDTH);
 			MapObject mo = map[index];
 			return mo;
+
 		}
 		return null;
 	}

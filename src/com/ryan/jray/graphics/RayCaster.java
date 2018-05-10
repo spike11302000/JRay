@@ -1,5 +1,6 @@
 package com.ryan.jray.graphics;
 
+import com.ryan.jray.entity.Entity;
 import com.ryan.jray.map.Map;
 import com.ryan.jray.map.MapObject;
 import com.ryan.jray.map.MapObjectType;
@@ -70,5 +71,13 @@ public class RayCaster {
 		test.distance = this.maxDistance;
 		return test;
 	}
-
+	public Entity EntityTest(double angle) {
+		this.rayPositon.x = this.position.x;// Setting the current position with the starting position.
+		this.rayPositon.y = this.position.y;
+		double rad = Math.toRadians(angle); // Convert degrees to radians.
+		this.rayVelocity.x = Math.sin(rad) * (this.step*2); // Calculate the velocity of the ray.
+		this.rayVelocity.y = -Math.cos(rad) * (this.step*2);
+		
+		return null;
+	}
 }

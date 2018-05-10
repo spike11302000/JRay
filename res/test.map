@@ -22,15 +22,15 @@
 12.5 20.5 3
 ==
 bbbbbbbbbbbaaacccccccccaaaeeeeee
-b b b b b b   c       c        e
+b#b b b b b   c       c        e
 b         b           c   e    e
-b         b   c       c   e    e
+b         b   c       c   e #  e
 b             c       c   e    e
 bbbbbbbbbbb   c       c   eeeeee
 a             c       c   e    e
-a             c       c        e
+a             c   #   c        e
 a             ccccccccc   eeeeee
-a                              a
+a  #                           a
 a                              a
 a             ddddddddddddddddda
 adddddddddd   dgggggggggggggggga

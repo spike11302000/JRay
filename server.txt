@@ -1,2 +1,3 @@
 port=1234
 default-map=test
+respawn-time=5

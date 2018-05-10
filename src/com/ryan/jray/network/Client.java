@@ -77,22 +77,28 @@ public class Client implements Runnable {
 			Logger.println(((PacketMessage) packet).msg, Logger.CLIENT);
 		} else if (packet instanceof PacketEntity) {
 			Entity ent = ((PacketEntity) packet).entity;
+			if (ent == null)
+				return;
 			int index = this.map.EntityIndex(ent.ID);
 			if (ent.ID != this.player.ID) {
 				if (index == -1) {
 					this.map.entities.add(ent);
 				} else {
 					Entity e = this.map.entities.get(index);
-					ent.position.x = MathUtils.lerp(ent.position.x, e.position.x, 0.5);
-					ent.position.y = MathUtils.lerp(ent.position.y, e.position.y, 0.5);
+					ent.position.x = MathUtils.lerp(ent.position.x, e.position.x, 0.1);
+					ent.position.y = MathUtils.lerp(ent.position.y, e.position.y, 0.1);
 					this.map.entities.set(index, ent);
 				}
 			}
 		} else if (packet instanceof PacketEntityRemove) {
 			int index = this.map.EntityIndex(((PacketEntityRemove) packet).EntityID);
 			if (index != -1) {
-				if (index <= this.map.entities.size())
-					this.map.entities.remove(index);
+				if (index < this.map.entities.size()) {
+					try {
+						this.map.entities.remove(index);
+					} catch (IndexOutOfBoundsException e) {
+					}
+				}
 			}
 		} else if (packet instanceof PacketMap) {
 			mapUpdate = true;
@@ -106,9 +112,9 @@ public class Client implements Runnable {
 				this.player.rotation = p.rotation;
 			if (p.health != -1) {
 				this.player.health = p.health;
-				if(p.health==0) {
+				if (p.health == 0) {
 					this.player.isAlive = false;
-				}else {
+				} else {
 					this.player.isAlive = true;
 				}
 			}

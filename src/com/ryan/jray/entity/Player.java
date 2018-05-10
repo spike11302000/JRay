@@ -21,6 +21,7 @@ public class Player extends Entity {
 	public Client client;
 	public String username;
 	public boolean isAlive = true;
+
 	public Player(Vector2 pos, double rot) {
 		this.position = pos;
 		this.rotation = rot;
@@ -50,46 +51,46 @@ public class Player extends Entity {
 				|| (this.key.down && this.key.right))
 			moveVel.div(new Vector2(2, 2));
 
-		if (this.key.up&&isAlive) {
+		if (this.key.up && isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x + (moveVel.x * 4), this.position.y)) == null)
 				this.position.x += moveVel.x;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.y * 4))) == null)
 				this.position.y += moveVel.y;
 		}
 
-		if (this.key.down&&isAlive) {
+		if (this.key.down && isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x - (moveVel.x * 4), this.position.y)) == null)
 				this.position.x -= moveVel.x;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.y * 4))) == null)
 				this.position.y -= moveVel.y;
 		}
-		if (this.key.left&&isAlive) {
+		if (this.key.left && isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x + (moveVel.y * 4), this.position.y)) == null)
 				this.position.x += moveVel.y;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.x * 4))) == null)
 				this.position.y -= moveVel.x;
 		}
-		if (this.key.right&&isAlive) {
+		if (this.key.right && isAlive) {
 			if (map.checkPoint(new Vector2(this.position.x - (moveVel.y * 4), this.position.y)) == null)
 				this.position.x -= moveVel.y;
 			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.x * 4))) == null)
 				this.position.y += moveVel.x;
 		}
 
-		if (this.key.keys[32] && tick % 1 == 0) {
+		if (this.key.keys[32] && tick % 6 == 0 && this.isAlive) {
 			Entity e = new Bullet(new Vector2(this.position.x + vel.x, this.position.y + vel.y), bulletVel);
-			
+
 			map.entities.add(e);
 			if (this.client != null) {
 				try {
 					e.Owner = this.client.player.Owner;
-					this.client.send(new PacketEntity(e,this.username));
+					this.client.send(new PacketEntity(e, this.username));
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-			}else {
-				
+			} else {
+
 			}
 		}
 		this.cam.position = this.position;
