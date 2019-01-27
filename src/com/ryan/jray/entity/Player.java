@@ -9,6 +9,8 @@ import com.ryan.jray.graphics.Camera;
 import com.ryan.jray.graphics.Screen;
 import com.ryan.jray.graphics.Sprite;
 import com.ryan.jray.map.Map;
+import com.ryan.jray.map.MapObject;
+import com.ryan.jray.map.MapObjectType;
 import com.ryan.jray.network.Client;
 import com.ryan.jray.network.packet.PacketEntity;
 
@@ -46,35 +48,42 @@ public class Player extends Entity {
 			this.rotation -= 2;
 		Vector2 vel = new Vector2(Math.sin(Math.toRadians(this.rotation)), -Math.cos(Math.toRadians(this.rotation)));
 		Vector2 moveVel = new Vector2(vel.x * this.speed, vel.y * this.speed);
+		MapObject mo = map.checkPoint(this.position);
+		Vector2 moveScale = new Vector2(1,1);
+		if(mo !=null && mo.type == MapObjectType.ABERRATION) {
+			moveScale = mo.aberrationScale.clone();
+			moveScale.x = 1/moveScale.x;
+			moveScale.y = 1/moveScale.y;
+		}
 		Vector2 bulletVel = new Vector2(vel.x * .2, vel.y * .2);
 		if ((this.key.up && this.key.left) || (this.key.up && this.key.right) || (this.key.down && this.key.left)
 				|| (this.key.down && this.key.right))
 			moveVel.div(new Vector2(2, 2));
 
 		if (this.key.up && isAlive) {
-			if (map.checkPoint(new Vector2(this.position.x + (moveVel.x * 4), this.position.y)) == null)
-				this.position.x += moveVel.x;
-			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.y * 4))) == null)
-				this.position.y += moveVel.y;
+			if (!map.checkCollion(new Vector2(this.position.x + (moveVel.x * 4), this.position.y)))
+				this.position.x += moveVel.x*moveScale.x;
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y + (moveVel.y * 4))))
+				this.position.y += moveVel.y*moveScale.y;
 		}
 
 		if (this.key.down && isAlive) {
-			if (map.checkPoint(new Vector2(this.position.x - (moveVel.x * 4), this.position.y)) == null)
-				this.position.x -= moveVel.x;
-			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.y * 4))) == null)
-				this.position.y -= moveVel.y;
+			if (!map.checkCollion(new Vector2(this.position.x - (moveVel.x * 4), this.position.y)))
+				this.position.x -= moveVel.x*moveScale.x;
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y - (moveVel.y * 4))))
+				this.position.y -= moveVel.y*moveScale.y;
 		}
 		if (this.key.left && isAlive) {
-			if (map.checkPoint(new Vector2(this.position.x + (moveVel.y * 4), this.position.y)) == null)
-				this.position.x += moveVel.y;
-			if (map.checkPoint(new Vector2(this.position.x, this.position.y - (moveVel.x * 4))) == null)
-				this.position.y -= moveVel.x;
+			if (!map.checkCollion(new Vector2(this.position.x + (moveVel.y * 4), this.position.y)))
+				this.position.x += moveVel.y*moveScale.x;
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y - (moveVel.x * 4))))
+				this.position.y -= moveVel.x*moveScale.y;
 		}
 		if (this.key.right && isAlive) {
-			if (map.checkPoint(new Vector2(this.position.x - (moveVel.y * 4), this.position.y)) == null)
-				this.position.x -= moveVel.y;
-			if (map.checkPoint(new Vector2(this.position.x, this.position.y + (moveVel.x * 4))) == null)
-				this.position.y += moveVel.x;
+			if (!map.checkCollion(new Vector2(this.position.x - (moveVel.y * 4), this.position.y)))
+				this.position.x -= moveVel.y*moveScale.x;
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y + (moveVel.x * 4))))
+				this.position.y += moveVel.x*moveScale.y;
 		}
 
 		if (this.key.keys[32] && tick % 6 == 0 && this.isAlive) {

@@ -12,7 +12,7 @@ public class Camera {
 	public Vector2 position = new Vector2();
 	public double rotation;
 	public double FOV = 50;
-	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .01);
+	public RayCaster rayCaster = new RayCaster(new Vector2(), 50d, .001);
 	public RayCaster lightCaster = new RayCaster(new Vector2(), 1d, .05);
 	private Map map;
 	private boolean light = true;

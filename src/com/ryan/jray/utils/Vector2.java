@@ -15,6 +15,9 @@ public class Vector2 implements Serializable{
 		this.x = x;
 		this.y = y;
 	}
+	public Vector2 clone() {
+		return new Vector2(this.x,this.y);
+	}
 
 	public double getX() {
 		return this.x;

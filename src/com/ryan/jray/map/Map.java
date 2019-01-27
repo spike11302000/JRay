@@ -98,6 +98,22 @@ public class Map {
 		return null;
 	}
 
+	public boolean checkCollion(Vector2 pos) {
+
+		if (pos.x > 0 && pos.y > 0 && pos.x < this.WIDTH && pos.y < this.HEIGHT) {
+
+			int index = (int) Math.floor(pos.x) + ((int) Math.floor(pos.y) * this.WIDTH);
+			MapObject mo = map[index];
+			if (mo == null)
+				return false;
+			if (mo.type == MapObjectType.ABERRATION)
+				return false;
+			return true;
+
+		}
+		return false;
+	}
+
 	public void removeEntity(int id) {
 		for (int i = 0; i < this.entities.size(); i++)
 			if (this.entities.get(i).ID == id) {
