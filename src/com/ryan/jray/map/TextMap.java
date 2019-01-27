@@ -74,9 +74,9 @@ public class TextMap extends Map {
 		}
 		// this.map[3 * (this.WIDTH) + 3] = new MapObject(MapObjectType.PORTAL,new
 		// Vector2(19,3));
-		this.map[5 * (this.WIDTH) + 6] = new MapObject(MapObjectType.ABERRATION, new Vector2(2, 1));
-		this.map[4 * (this.WIDTH) + 6] = new MapObject(MapObjectType.TEXTURE,1);
-		this.map[6 * (this.WIDTH) + 6] = new MapObject(MapObjectType.TEXTURE,1);
+		this.map[5 * (this.WIDTH) + 6] = new MapObject(MapObjectType.ABERRATION, new Vector2(20, 1));
+		this.map[4 * (this.WIDTH) + 6] = new MapObject(MapObjectType.TEXTURE,2);
+		this.map[6 * (this.WIDTH) + 6] = new MapObject(MapObjectType.TEXTURE,2);
 		// System.out.println(this.HEIGHT);
 	}
 }

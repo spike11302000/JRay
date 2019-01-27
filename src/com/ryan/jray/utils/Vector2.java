@@ -31,21 +31,25 @@ public class Vector2 implements Serializable{
 		return Math.sqrt((vec.x - this.x) * (vec.x - this.x) + (vec.y - this.y) * (vec.y - this.y));
 	}
 
-	public void add(Vector2 vec) {
+	public Vector2 add(Vector2 vec) {
 		this.x = this.x + vec.x;
 		this.y = this.y + vec.y;
+		return this;
 	}
-	public void sub(Vector2 vec) {
+	public Vector2 sub(Vector2 vec) {
 		this.x = this.x - vec.x;
 		this.y = this.y - vec.y;
+		return this;
 	}
-	public void mult(Vector2 vec) {
+	public Vector2 mult(Vector2 vec) {
 		this.x = this.x * vec.x;
 		this.y = this.y * vec.y;
+		return this;
 	}
-	public void div(Vector2 vec) {
+	public Vector2 div(Vector2 vec) {
 		this.x = this.x / vec.x;
 		this.y = this.y / vec.y;
+		return this;
 	}
 	public String toString() {
 		return "X:"+Math.floor(this.x*1000)/1000 + " Y:" + Math.floor(this.y*1000)/1000;

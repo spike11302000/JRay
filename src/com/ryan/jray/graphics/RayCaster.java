@@ -46,7 +46,6 @@ public class RayCaster {
 		this.rayPositon.y = this.position.y;
 		double rad = Math.toRadians(angle); // Convert degrees to radians.
 		double bsteps = 25;
-		this.step = .001;
 		this.rayVelocity.x = Math.sin(rad) / bsteps; // Calculate the velocity of the ray.
 		this.rayVelocity.y = -Math.cos(rad) / bsteps;
 		double texX;
@@ -56,16 +55,17 @@ public class RayCaster {
 		boolean isPortal = false;
 		Vector2 portal = new Vector2();
 		boolean close = false;
-		Vector2 currentSpaceWarp = new Vector2();
-		
+		Vector2 currentSpaceWarp = new Vector2(1,1);
 		do {
 			Vector2 spaceWarp = this.rayVelocity.clone();
-			this.rayPositon.add(this.rayVelocity); // Adds the velocity to the current ray position.
+			
 			MapObject mo = map.checkPoint(this.rayPositon); // Checks if there is a object and return the MapObject.
 			if (mo != null && mo.visible) // Check is the object is there or not.
 				if (!close && mo.type != MapObjectType.ABERRATION) {
 					close = true;
-					this.rayPositon.sub(this.rayVelocity);
+					spaceWarp.div(currentSpaceWarp);
+					this.rayPositon.sub(spaceWarp);
+					
 					this.rayVelocity.mult(new Vector2(this.step * bsteps, this.step * bsteps));
 					//spaceWarp = this.rayVelocity.clone();
 					continue;
@@ -75,7 +75,7 @@ public class RayCaster {
 					else if (mo.type == MapObjectType.ABERRATION) {
 						//if(currentSpaceWarp != mo.aberrationScale) {
 							currentSpaceWarp = mo.aberrationScale;
-							spaceWarp.mult(mo.aberrationScale);
+							spaceWarp.div(mo.aberrationScale);
 						//}
 					} else if (mo.type == MapObjectType.PORTAL) {
 						this.rayPositon.x = mo.portalExit.x;
@@ -94,7 +94,8 @@ public class RayCaster {
 				}
 			
 			
-			dist = dist + new Vector2().distance(spaceWarp); // Gets the distance of the ray from the
+			dist = dist + new Vector2().distance(this.rayVelocity); // Gets the distance of the ray from the
+			this.rayPositon.add(spaceWarp); // Adds the velocity to the current ray position.
 			// starting point.
 			//dist = this.position.distance(spaceWarp);
 			this.rayVelocity.mult(new Vector2(1 + this.step / 10, 1 + this.step / 10));
