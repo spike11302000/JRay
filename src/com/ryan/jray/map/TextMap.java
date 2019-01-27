@@ -64,14 +64,19 @@ public class TextMap extends Map {
 				if (i == ' ') {
 					this.map[y * (this.WIDTH) + x] = null;
 				} else if (i == '#') {// blue spawn points
-					this.blueSpawnPoints.add(new Vector2(x+.5, y+.5));
+					this.blueSpawnPoints.add(new Vector2(x + .5, y + .5));
 				} else if (i == '$') {// red spawn points
-					this.redSpawnPoints.add(new Vector2(x+.5, y+.5));
+					this.redSpawnPoints.add(new Vector2(x + .5, y + .5));
 				} else {
 					this.map[y * (this.WIDTH) + x] = new MapObject(MapObjectType.TEXTURE, this.tileDef[i]);
 				}
 			}
 		}
+		// this.map[3 * (this.WIDTH) + 3] = new MapObject(MapObjectType.PORTAL,new
+		// Vector2(19,3));
+		this.map[5 * (this.WIDTH) + 6] = new MapObject(MapObjectType.ABERRATION, new Vector2(2, 1));
+		this.map[4 * (this.WIDTH) + 6] = new MapObject(MapObjectType.TEXTURE,1);
+		this.map[6 * (this.WIDTH) + 6] = new MapObject(MapObjectType.TEXTURE,1);
 		// System.out.println(this.HEIGHT);
 	}
 }

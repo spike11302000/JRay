@@ -9,6 +9,8 @@ public class MapObject {
 	public boolean visible; 
 	public int textureID;
 	public Vector2 textureOffset;
+	public Vector2 portalExit;
+	public Vector2 aberrationScale;
 	public MapObject() {
 		this.color = 0xF0F0F0;
 		this.type = MapObjectType.COLOR;
@@ -25,6 +27,19 @@ public class MapObject {
 		this.textureID = color;
 		this.type = type;
 		this.visible = visible;
+	}
+	public MapObject(MapObjectType type,Vector2 vec) { //portals
+		this.color = 0;
+		this.textureID = 0;
+		this.type = type;
+		if(type == MapObjectType.PORTAL) {
+			this.portalExit = vec;
+		}
+		if(type == MapObjectType.ABERRATION) {
+			this.aberrationScale = vec;
+		}
+		this.visible = true;
+		
 	}
 	/*public MapObject(Vector2 imgVec) {
 		this.color = 0x0000;
