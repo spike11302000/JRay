@@ -13,8 +13,10 @@ public class Bullet extends Entity {
 	int tick = 0;
 	public void collide() {
 		this.destroy();
+		
 	}
 	public void update(){
+	
 		tick++;
 		if(tick>=lifeTime)
 			this.destroy();

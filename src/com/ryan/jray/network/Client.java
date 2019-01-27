@@ -112,7 +112,8 @@ public class Client implements Runnable {
 				this.player.rotation = p.rotation;
 			if (p.health != -1) {
 				this.player.health = p.health;
-				if (p.health == 0) {
+				System.out.println(p.health);
+				if (p.health <= 0) {
 					this.player.isAlive = false;
 				} else {
 					this.player.isAlive = true;

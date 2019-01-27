@@ -41,8 +41,7 @@ public class Server implements Runnable {
 			socket = new DatagramSocket(this.config.getInt("port"));
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println("Failed to start server, check to see if you have another app open on port: "
-					+ config.getString("port") + "!");
+			System.out.println("Failed to start server, check to see if you have another app open on port: " + config.getString("port") + "!");
 			System.exit(0);
 		}
 	}
@@ -97,9 +96,11 @@ public class Server implements Runnable {
 			}
 		}
 		for (int i = 0; i < this.map.entities.size(); i++) {
+			Entity ent = this.map.entities.get(i);
 			if (this.map.entities.get(i) instanceof Bullet) {
-
+					
 				Bullet b = (Bullet) this.map.entities.get(i);
+				
 				for (int ii = 0; ii < this.clients.size(); ii++) {
 					ServerClient c = this.clients.get(ii);
 					if (c.player.position.distance(b.position) < .5 && b.Owner != c.player.Owner) {
@@ -108,7 +109,7 @@ public class Server implements Runnable {
 						if (this.map.entities.get(this.map.EntityIndex(c.player.ID)).health <= 0) {
 							if (c.isAlive) {
 								try {
-									this.broadcast(new PacketMessage(c.username+ " was killed by " + b.Owner));
+									this.broadcast(new PacketMessage(c.username + " was killed by " + b.Owner));
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
@@ -119,11 +120,10 @@ public class Server implements Runnable {
 							c.isAlive = true;
 						}
 						// Logger.println("Bullet", Logger.DEBUG);
-						b.destroy();
+						ent.destroy();
 
 						try {
-							c.send(new PacketSetPlayer(null, -1,
-									this.map.entities.get(this.map.EntityIndex(c.player.ID)).health));
+							c.send(new PacketSetPlayer(null, -1, this.map.entities.get(this.map.EntityIndex(c.player.ID)).health));
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
@@ -131,6 +131,7 @@ public class Server implements Runnable {
 					}
 				}
 			}
+			
 		}
 		if (tick % 1 == 0) {
 			for (int i = 0; i < this.map.removedEntities.size(); i++) {
@@ -197,7 +198,7 @@ public class Server implements Runnable {
 			if (!exist) {
 				ServerClient c = new ServerClient(this.socket, p.getAddress(), p.getPort(), packet.from);
 				this.clients.add(c);
-				
+
 				Logger.println(c.username + " joined the server!", Logger.SERVER);
 				broadcast(new PacketMessage(c.username + " joined the server!"));
 				c.send(new PacketMap(CurrentMap + ".map"));
