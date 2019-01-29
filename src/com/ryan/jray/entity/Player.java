@@ -61,28 +61,28 @@ public class Player extends Entity {
 			moveVel.div(new Vector2(2, 2));
 
 		if (this.key.up && isAlive) {
-			if (!map.checkCollion(new Vector2(this.position.x + (moveVel.x * 4), this.position.y)))
+			if (!map.checkCollion(new Vector2(this.position.x + (moveVel.x*moveScale.x * 4), this.position.y)))
 				this.position.x += moveVel.x*moveScale.x;
-			if (!map.checkCollion(new Vector2(this.position.x, this.position.y + (moveVel.y * 4))))
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y + (moveVel.y*moveScale.y * 4))))
 				this.position.y += moveVel.y*moveScale.y;
 		}
 
 		if (this.key.down && isAlive) {
-			if (!map.checkCollion(new Vector2(this.position.x - (moveVel.x * 4), this.position.y)))
+			if (!map.checkCollion(new Vector2(this.position.x - (moveVel.x*moveScale.x * 4), this.position.y)))
 				this.position.x -= moveVel.x*moveScale.x;
-			if (!map.checkCollion(new Vector2(this.position.x, this.position.y - (moveVel.y * 4))))
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y - (moveVel.y*moveScale.y * 4))))
 				this.position.y -= moveVel.y*moveScale.y;
 		}
 		if (this.key.left && isAlive) {
-			if (!map.checkCollion(new Vector2(this.position.x + (moveVel.y * 4), this.position.y)))
+			if (!map.checkCollion(new Vector2(this.position.x + (moveVel.y*moveScale.x * 4), this.position.y)))
 				this.position.x += moveVel.y*moveScale.x;
-			if (!map.checkCollion(new Vector2(this.position.x, this.position.y - (moveVel.x * 4))))
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y - (moveVel.x*moveScale.y * 4))))
 				this.position.y -= moveVel.x*moveScale.y;
 		}
 		if (this.key.right && isAlive) {
-			if (!map.checkCollion(new Vector2(this.position.x - (moveVel.y * 4), this.position.y)))
+			if (!map.checkCollion(new Vector2(this.position.x - (moveVel.y*moveScale.x * 4), this.position.y)))
 				this.position.x -= moveVel.y*moveScale.x;
-			if (!map.checkCollion(new Vector2(this.position.x, this.position.y + (moveVel.x * 4))))
+			if (!map.checkCollion(new Vector2(this.position.x, this.position.y + (moveVel.x*moveScale.y * 4))))
 				this.position.y += moveVel.x*moveScale.y;
 		}
 
