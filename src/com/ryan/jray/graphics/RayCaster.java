@@ -51,7 +51,6 @@ public class RayCaster {
 		double texX;
 		double texY;
 		double dist = 0;
-		double dist2 = 0;
 		boolean isPortal = false;
 		Vector2 portal = new Vector2();
 		boolean close = false;
@@ -60,6 +59,9 @@ public class RayCaster {
 			Vector2 spaceWarp = this.rayVelocity.clone();
 			
 			MapObject mo = map.checkPoint(this.rayPositon); // Checks if there is a object and return the MapObject.
+			/*
+			 * every thing after this only god knows how it works
+			 */
 			if (mo != null && mo.visible) // Check is the object is there or not.
 				if (!close && mo.type != MapObjectType.ABERRATION) {
 					close = true;
@@ -71,7 +73,7 @@ public class RayCaster {
 					continue;
 				} else {
 					if (mo.type == MapObjectType.COLOR)
-						return new RayObject(dist + dist2, mo);
+						return new RayObject(dist, mo);
 					else if (mo.type == MapObjectType.ABERRATION) {
 						//if(currentSpaceWarp != mo.aberrationScale) {
 							currentSpaceWarp = mo.aberrationScale;
@@ -86,7 +88,7 @@ public class RayCaster {
 					} else {
 						texX = this.rayPositon.x % 1;
 						texY = this.rayPositon.y % 1;
-						return new RayObject(dist + dist2, mo, new Vector2(texX, texY),
+						return new RayObject(dist, mo, new Vector2(texX, texY),
 								new Vector2(this.rayPositon.x, this.rayPositon.y)); // Return a RayObject with distance
 																					// and
 						// MapObject.
